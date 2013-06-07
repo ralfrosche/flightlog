@@ -1,0 +1,105 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:baselineAligned="false"
+    android:fitsSystemWindows="false"
+    android:measureWithLargestChild="false"
+    android:orientation="vertical" >
+
+            <TableRow
+                android:id="@+id/tableRow4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/TextView01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Datum:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/dateedit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="date" >
+
+                    <requestFocus />
+                </EditText>
+
+                <ImageButton
+                    android:id="@+id/dateButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/calendar_date_small" />
+            </TableRow>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="#FF00" />
+
+            <TableRow
+                android:id="@+id/tableRow3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.85"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Beschr.:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/beschreibungedit"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_span="2"
+                    android:gravity="top"
+                    android:inputType="textMultiLine"
+                    android:lines="15"
+                    android:scrollHorizontally="false"
+                    android:scrollbarStyle="insideOverlay"
+                    android:scrollbars="vertical" />
+
+            </TableRow>
+<View
+    android:layout_width="fill_parent"
+    android:layout_height="1dip"
+    android:background="#FF00" />
+     
+
+>
+
+  <TableRow
+      android:id="@+id/tableRow11"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:layout_marginTop="10dp"
+      android:gravity="center"
+      android:visibility="visible" >
+
+      <Button
+          android:id="@+id/savebutton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Save" />
+
+      <Button
+          android:id="@+id/cancelbutton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Cancel" />
+       
+    </TableRow>
+    
+</LinearLayout>

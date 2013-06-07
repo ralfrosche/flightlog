@@ -1,0 +1,7 @@
+
+    <menu xmlns:android="http://schemas.android.com/apk/res/android">
+        
+        <item android:id="@+id/search" android:title="@string/search"></item><item android:id="@+id/version" android:title="@string/version"></item>
+        <item android:id="@+id/backup" android:title="Backup DB"></item>
+        <item android:id="@+id/export" android:title="Export DB"></item>
+    </menu>
