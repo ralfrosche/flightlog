@@ -59,6 +59,7 @@ public class EditActivity extends Activity {
 	// ADDED
 	String filemanagerstring;
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -88,6 +89,7 @@ public class EditActivity extends Activity {
 
 				String myString = DataToDB[1];
 
+				@SuppressWarnings("rawtypes")
 				ArrayAdapter myAdap = (ArrayAdapter) styp.getAdapter(); // cast
 																		// to an
 																		// ArrayAdapter
@@ -139,9 +141,6 @@ public class EditActivity extends Activity {
 					} else {
 						imageViewChoose.setImageResource(R.drawable.spitfire33);
 					}
-					// imageViewChoose.setScaleType(ImageView.ScaleType.FIT_XY);
-					// imageViewChoose.setLayoutParams(new
-					// Gallery.LayoutParams(260, 210));
 
 				} else {
 					imageViewChoose.setImageResource(R.drawable.spitfire33);
@@ -248,6 +247,7 @@ public class EditActivity extends Activity {
 
 		// add a click listener to the button
 		mPickDate.setOnClickListener(new View.OnClickListener() {
+			@SuppressWarnings("deprecation")
 			@Override
 			public void onClick(View v) {
 				showDialog(DATE_DIALOG_ID);

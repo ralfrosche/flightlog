@@ -1,12 +1,16 @@
 package com.rosche.flightlog;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.Reader;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -23,6 +27,7 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.Toast;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -31,6 +36,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static String DB_NAME = "flightlog20130527";
 
 	private SQLiteDatabase myDataBase;
+
+	public static String separation = ",";
 
 	private final Context myContext;
 
@@ -300,11 +307,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return checkDB != null ? true : false;
 	}
 
-	/**
-	 * Copies your database from your local assets-folder to the just created
-	 * empty database in the system folder, from where it can be accessed and
-	 * handled. This is done by transfering bytestream.
-	 * */
 	private void copyDataBase() throws IOException {
 		Log.e("MLISTE", "+++ copyDataBase +++");
 
@@ -323,6 +325,231 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		myOutput.flush();
 		myOutput.close();
 		myInput.close();
+
+	}
+
+	public boolean importDataBaseComplete(Context context) throws IOException {
+
+		try {
+
+			File sdCard = Environment.getExternalStorageDirectory();
+			String dir = sdCard.getAbsolutePath() + "/flight_log/import/";
+			String inFilename = "model_data.csv";
+			
+			// testing read from asset
+			//InputStream myInput = myContext.getAssets().open(inFilename);
+			//InputStreamReader r = new InputStreamReader(myInput);
+			//BufferedReader br = new BufferedReader(r);
+			// testing
+			
+			FileReader fr = new FileReader(dir+inFilename);
+			BufferedReader br = new BufferedReader(fr);
+
+			String data = "";
+			String tableName = "flightlog";
+			String columns = "id,name,typ,beschreibung,datum,spannweite,länge,gewicht,rcdata,ausstattung,status";
+			String InsertString1 = "INSERT INTO " + tableName + " (" + columns
+					+ ") values (";
+			String InsertString2 = ")";
+
+			while ((data = br.readLine()) != null) {
+
+				Integer nextval = getId("flightlog");
+
+				String[] sarray = data.split(",");
+				String sqlQuery = "";
+				if (sarray.length == 12) {
+					StringBuilder sb = new StringBuilder(InsertString1);
+					String nameModel = sarray[1].replaceAll("\"", "").trim()
+							.toLowerCase(Locale.GERMANY);
+					if (!nameModel.equals("name")) {
+						sb.append("\"" + String.valueOf(nextval) + "\",");
+						sb.append("\"" + sarray[1].replaceAll("\"", "") + "\",");
+						sb.append("\"" + sarray[2].replaceAll("\"", "") + "\",");
+						sb.append("\"" + sarray[3].replaceAll("\"", "") + "\",");
+						sb.append("\"" + sarray[4].replaceAll("\"", "") + "\",");
+						sb.append("\"" + sarray[5].replaceAll("\"", "") + "\",");
+						sb.append("\"" + sarray[6].replaceAll("\"", "") + "\",");
+						sb.append("\"" + sarray[7].replaceAll("\"", "") + "\",");
+						sb.append("\"" + sarray[8].replaceAll("\"", "") + "\",");
+						sb.append("\"" + sarray[9].replaceAll("\"", "") + "\",");
+						sb.append("\"" + sarray[10].replaceAll("\"", "") + "\"");
+						sb.append(InsertString2);
+
+						Log.e("MLISTE", "+++ SQL importCSV:" + sb.toString());
+						sqlQuery = sb.toString();
+
+						try {
+							SQLiteDatabase db = this.getWritableDatabase();
+
+							db.execSQL(sqlQuery);
+
+							db.close();
+
+						} catch (SQLiteException e) {
+							Log.e("MLISTE", "+++ get id +++" + e);
+
+						}
+
+						Toast.makeText(
+								context,
+								"Modell " + sarray[1].replaceAll("\"", "")
+										+ " importiert.", Toast.LENGTH_SHORT)
+								.show();
+					}
+				} else {
+					Toast.makeText(
+							context,
+							"Error: Datensatzlänge nicht korrekt! L:"
+									+ String.valueOf(sarray.length),
+							Toast.LENGTH_SHORT).show();
+				}
+
+			}
+
+			br.close();
+
+			return true;
+
+		} catch (IOException e) {
+
+			Toast.makeText(context,
+					"ERROR:Import Model der Datenbank fehlgeschlagen!" + e,
+					Toast.LENGTH_SHORT).show();
+			Log.e("MLISTE", "+++ ERROR exportDataBaseComplete +++" + e);
+			return false;
+		}
+
+	}
+
+	public boolean exportDataBaseComplete() throws IOException {
+		Log.e("MLISTE", "+++ exportDataBase +++");
+
+		try {
+
+			SimpleDateFormat dateFormat = new SimpleDateFormat(
+					"ddMMyyyyHHmmss", Locale.GERMANY);
+			File sdCard = Environment.getExternalStorageDirectory();
+			File dir = new File(sdCard.getAbsolutePath() + "/flight_log/export");
+			dir.mkdir();
+
+			String outFilename = dateFormat.format(new Date()) + "_"
+					+ "model_data_complete.csv";
+
+			File f = new File(dir, outFilename);
+			f.createNewFile();
+
+			OutputStream myOutput = new FileOutputStream(f);
+			PrintStream printStream = new PrintStream(myOutput);
+
+			String sqlQuery = "SELECT f.*,i.image_path FROM flightlog f join images i on i.model_id=f.id ORDER BY f.id ASC";
+			String record = "";
+			String header = "";
+
+			header = '"' + "MODELL_ID" + '"' + separation;
+			header += '"' + "NAME" + '"' + separation;
+			header += '"' + "TYP" + '"' + separation;
+			header += '"' + "BESCHREIBUNG" + '"' + separation;
+			header += '"' + "DATUM" + '"' + separation;
+			header += '"' + "SPANNWEITE" + '"' + separation;
+			header += '"' + "LAENGE" + '"' + separation;
+			header += '"' + "GEWICHT" + '"' + separation;
+			header += '"' + "RCEINSTELLUNG" + '"' + separation;
+			header += '"' + "AUSSTATTUNG" + '"' + separation;
+			header += '"' + "STATUS" + '"' + separation;
+			header += '"' + "BILD_PFAD" + '"' + "\n";
+
+			printStream.print(header);
+
+			try {
+				SQLiteDatabase db = this.getWritableDatabase();
+				Cursor c = db.rawQuery(sqlQuery, null);
+
+				if (c.moveToFirst()) {
+					do {
+
+						record = c.getString(c.getColumnIndex("id"));
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("name")) + '"';
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("typ")) + '"';
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("beschreibung"))
+								+ '"';
+						record += separation
+								+ c.getString(c.getColumnIndex("datum"));
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("spannweite"))
+								+ '"';
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("länge")) + '"';
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("gewicht"))
+								+ '"';
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("rcdata")) + '"';
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("ausstattung"))
+								+ '"';
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("status")) + '"';
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("image_path"))
+								+ '"';
+						record += '\n';
+						printStream.print(record);
+						Integer model_id = Integer.parseInt(c.getString(c
+								.getColumnIndex("id")));
+						ArrayList<String> flights = new ArrayList<String>();
+
+						// *********************
+						// insert flights
+						flights = exportDataBaseFlightsById(model_id);
+						int length = flights.size();
+						if (length > 2) {
+							String prefix = "\"\"" + separation + "\"\""
+									+ separation;
+							String postfix = separation + prefix + prefix
+									+ prefix + "\n";
+							for (int i = 0; i < length; i++) {
+								String flight = "";
+								if (i == 0 || i == 1) {
+									flight = flights.get(i);
+									flight = prefix + flight + postfix;
+
+								} else {
+									flight = flights.get(i);
+									flight = prefix + String.valueOf(i)
+											+ separation + flight + postfix;
+								}
+								printStream.print(flight);
+							}
+						}
+
+						// ********************
+
+					} while (c.moveToNext());
+				}
+
+				c.close();
+
+				db.close();
+
+			} catch (SQLiteException e) {
+				Log.e("MLISTE", "+++ readData +++" + e);
+
+			}
+
+			printStream.flush();
+			printStream.close();
+			myOutput.flush();
+			myOutput.close();
+
+			return true;
+		} catch (IOException e) {
+			Log.e("MLISTE", "+++ ERROR exportDataBaseComplete +++" + e);
+			return false;
+		}
 
 	}
 
@@ -350,17 +577,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			String record = "";
 			String header = "";
 
-			header = '"' + "MODELL_ID" + '"' + ";";
-			header += '"' + "NAME" + '"' + ";";
-			header += '"' + "TYP" + '"' + ";";
-			header += '"' + "BESCHREIBUNG" + '"' + ";";
-			header += '"' + "DATUM" + '"' + ";";
-			header += '"' + "SPANNWEITE" + '"' + ";";
-			header += '"' + "LAENGE" + '"' + ";";
-			header += '"' + "GEWICHT" + '"' + ";";
-			header += '"' + "RCEINSTELLUNG" + '"' + ";";
-			header += '"' + "AUSSTATTUNG" + '"' + ";";
-			header += '"' + "STATUS" + '"' + ";";
+			header = '"' + "MODELL_ID" + '"' + separation;
+			header += '"' + "NAME" + '"' + separation;
+			header += '"' + "TYP" + '"' + separation;
+			header += '"' + "BESCHREIBUNG" + '"' + separation;
+			header += '"' + "DATUM" + '"' + separation;
+			header += '"' + "SPANNWEITE" + '"' + separation;
+			header += '"' + "LAENGE" + '"' + separation;
+			header += '"' + "GEWICHT" + '"' + separation;
+			header += '"' + "RCEINSTELLUNG" + '"' + separation;
+			header += '"' + "AUSSTATTUNG" + '"' + separation;
+			header += '"' + "STATUS" + '"' + separation;
 			header += '"' + "BILD_PFAD" + '"' + "\n";
 
 			printStream.print(header);
@@ -373,30 +600,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					do {
 
 						record = c.getString(c.getColumnIndex("id"));
-						record += ";" + '"'
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("name")) + '"';
-						record += ";" + '"'
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("typ")) + '"';
-						record += ";" + '"'
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("beschreibung"))
 								+ '"';
-						record += ";" + c.getString(c.getColumnIndex("datum"));
-						record += ";" + '"'
+						record += separation
+								+ c.getString(c.getColumnIndex("datum"));
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("spannweite"))
 								+ '"';
-						record += ";" + '"'
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("länge")) + '"';
-						record += ";" + '"'
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("gewicht"))
 								+ '"';
-						record += ";" + '"'
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("rcdata")) + '"';
-						record += ";" + '"'
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("ausstattung"))
 								+ '"';
-						record += ";" + '"'
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("status")) + '"';
-						record += ";" + '"'
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("image_path"))
 								+ '"';
 						record += "\n";
@@ -428,7 +656,60 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	}
 
-	public boolean exportDataBaseFlights() throws IOException {
+	public ArrayList<String> exportDataBaseFlightsById(Integer model_id) {
+		Log.e("MLISTE", "+++ exportDataBaseflightsbyid +++");
+		ArrayList<String> flights = new ArrayList<String>();
+		String constraint = "";
+		if (model_id > 0) {
+			constraint = " AND f.model_id=" + String.valueOf(model_id)
+					+ " ORDER BY f.id ASC";
+		} else {
+			constraint = " ORDER BY f.id ASC";
+		}
+		String sqlQuery = "SELECT f.model_id,m.name,f.date,f.description FROM flights f join flightlog m on f.model_id=m.id "
+				+ constraint;
+		String record = "";
+		String header = "";
+
+		header = "\"Fluege\"" + separation;
+		header += "\"\"" + separation;
+		header += "\"\"";
+		flights.add(header);
+
+		header = "\"Nr.\"" + separation;
+		header += "\"Datum\"" + separation;
+		header += "\"Bericht\"";
+
+		flights.add(header);
+
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor c = db.rawQuery(sqlQuery, null);
+			if (c.moveToFirst()) {
+				do {
+					record = c.getString(c.getColumnIndex("date"));
+					record += separation + "\""
+							+ c.getString(c.getColumnIndex("description"))
+							+ "\"";
+
+					flights.add(record);
+
+				} while (c.moveToNext());
+			}
+
+			c.close();
+
+			db.close();
+
+		} catch (SQLiteException e) {
+			Log.e("MLISTE", "+++ readData +++" + e);
+
+		}
+		return flights;
+
+	}
+
+	public boolean exportDataBaseFlights(Integer model_id) throws IOException {
 		Log.e("MLISTE", "+++ exportDataBase +++");
 
 		try {
@@ -447,14 +728,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 			OutputStream myOutput = new FileOutputStream(f);
 			PrintStream printStream = new PrintStream(myOutput);
-
-			String sqlQuery = "SELECT f.model_id,m.name,f.date,f.description FROM flights f join flightlog m on f.model_id=m.id";
+			String constraint = "";
+			if (model_id > 0) {
+				constraint = " AND f.model_id=" + String.valueOf(model_id);
+			} else {
+				constraint = "";
+			}
+			String sqlQuery = "SELECT f.model_id,m.name,f.date,f.description FROM flights f join flightlog m on f.model_id=m.id "
+					+ constraint;
 			String record = "";
 			String header = "";
 
-			header = '"' + "MODELL_ID" + '"' + ";";
-			header += '"' + "NAME" + '"' + ";";
-			header += '"' + "DATUM" + '"' + ";";
+			header = '"' + "MODELL_ID" + '"' + separation;
+			header += '"' + "NAME" + '"' + separation;
+			header += '"' + "DATUM" + '"' + separation;
 			header += '"' + "EINTRAG" + '"' + "\n";
 
 			printStream.print(header);
@@ -467,10 +754,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					do {
 
 						record = c.getString(c.getColumnIndex("model_id"));
-						record += ";" + '"'
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("name")) + '"';
-						record += ";" + c.getString(c.getColumnIndex("date"));
-						record += ";" + '"'
+						record += separation
+								+ c.getString(c.getColumnIndex("date"));
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("description"))
 								+ '"';
 						record += "\n";
@@ -659,6 +947,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		return image_path;
 	}
 
+	public void setSeparation(String character) {
+		separation = character;
+		Log.e("MListe", "SeparationChar:" + separation);
+	}
+
 	public void resetImageDB() {
 
 		String sqlQueryDelete = "DELETE FROM images WHERE 1";
@@ -708,10 +1001,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 							.getColumnIndex("image_path"));
 					;
 					String f = sdCard.getAbsolutePath() + "/" + oldImagePath;
-					Log.e("MLISTE", "+++ delete: +++" + oldImagePath);
+					Log.e("MLISTE", "+++ delete_oldimage: +++" + oldImagePath);
+					Log.e("MLISTE", "+++ iamge_path +++" + image_path);
 					File file = new File(f);
-					if (file.exists())
-						file.delete();
+					if (file.exists()) {
+						if (!oldImagePath.equals(image_path))
+							file.delete();
+					}
 
 				} while (c.moveToNext());
 			}

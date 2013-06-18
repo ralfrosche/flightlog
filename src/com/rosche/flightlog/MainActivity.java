@@ -16,11 +16,13 @@ import android.app.SearchManager.OnDismissListener;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.SQLException;
 
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 
 import android.util.Log;
 import android.view.Menu;
@@ -43,7 +45,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
 	private Spinner customListSpinner;
 	String[] DataToDB;
+	public static String separation = ",";
 	String[] result_array;
+	public static SharedPreferences mPrefs;
 	String Selecteditem;
 	Integer SelectedPosition = 0;
 	public String filter = "";
@@ -63,6 +67,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 		setContentView(R.layout.main);
 		initCustomListSpinner(filter);
 		handleIntent(getIntent());
+
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		readPrefs();
 
 		Button editButton = (Button) findViewById(R.id.editbutton);
 		Button newButton = (Button) findViewById(R.id.newbutton);
@@ -275,11 +282,32 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 			doBackup();
 			return true;
 		case R.id.export:
+			readPrefs();
 			doExport();
+			return true;
+		case R.id.options:
+			Intent intent = new Intent(this, PreferencesActivity.class);
+			startActivity(intent);
+			return true;
+		case R.id.importMod:
+			readPrefs();
+			doImport();
 			return true;
 		}
 
 		return false;
+	}
+
+	public void readPrefs() {
+		String valueTmp = mPrefs.getString("separation", separation);
+
+		Log.e("MListe", "SeparationOld:" + separation);
+		if (!valueTmp.equals("")) {
+			separation = valueTmp;
+		}
+
+		Log.e("MListe", "SeparationNew:" + valueTmp);
+
 	}
 
 	private void launchEdit(boolean edit) {
@@ -307,9 +335,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 				.setInverseBackgroundForced(false)
 				.setMessage(
 
-						"Flightlog V1.03\n" + "(c) 2013 Ralf Rosche\n"
+						"Flightlog V1.04\n" + "(c) 2013 Ralf Rosche\n"
 								+ "Database Version: " + DatabaseHelper.DB_NAME
-								+ "\nKommerzielle Nutzung der Daten verboten!")
+								+ "\nKommerzielle Nutzung der Daten verboten!"
+								+ "\nVerbesserungsvorschläge willkommen!"
+								+ "\nmailto:aeroclub@gmx.net")
 				.show();
 	}
 
@@ -344,10 +374,37 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
 	}
 
+	public void doImport() {
+
+		boolean Success = false;
+		try {
+			myDbHelper.createDataBase();
+			myDbHelper.setSeparation(separation);
+			Success = myDbHelper.importDataBaseComplete(getBaseContext());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (Success) {
+			Toast.makeText(getBaseContext(),
+					"Import der Model Datenbank erfolgreich!",
+					Toast.LENGTH_SHORT).show();
+			initCustomListSpinner(filter);
+
+		} else {
+			Toast.makeText(getBaseContext(),
+					"ERROR:Import Model der Datenbank fehlgeschlagen!",
+					Toast.LENGTH_SHORT).show();
+
+		}
+	}
+
 	public void doExport() {
+
 		boolean backupSuccess = false;
 		try {
 			myDbHelper.createDataBase();
+			myDbHelper.setSeparation(separation);
 			backupSuccess = myDbHelper.exportDataBase();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -367,7 +424,8 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
 		try {
 			myDbHelper.createDataBase();
-			backupSuccess = myDbHelper.exportDataBaseFlights();
+			myDbHelper.setSeparation(separation);
+			backupSuccess = myDbHelper.exportDataBaseFlights(0);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -380,6 +438,27 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 		} else {
 			Toast.makeText(getBaseContext(),
 					"ERROR:Export Flight der Datenbank fehlgeschlagen!",
+					Toast.LENGTH_SHORT).show();
+
+		}
+
+		try {
+			myDbHelper.createDataBase();
+			myDbHelper.setSeparation(separation);
+			backupSuccess = myDbHelper.exportDataBaseComplete();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (backupSuccess) {
+			Toast.makeText(getBaseContext(),
+					"Export der kompoletten Flight Tabelle erfolgreich!",
+					Toast.LENGTH_SHORT).show();
+
+		} else {
+			Toast.makeText(
+					getBaseContext(),
+					"ERROR:Export der kompoletten Flight Tabelle fehlgeschlagen!",
 					Toast.LENGTH_SHORT).show();
 
 		}

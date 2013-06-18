@@ -42,6 +42,15 @@
         <activity android:name="com.rosche.flightlog.Flights"/>
         <activity android:name="com.rosche.flightlog.NewFlight"/>
         
+        
+         <activity android:name="PreferencesActivity"
+        android:label="Settings"
+        android:enabled="true" >
+        <intent-filter>
+            <category android:name="android.intent.category.PREFERENCE" />
+        </intent-filter>
+    </activity>
+
     </application>
 
 </manifest>

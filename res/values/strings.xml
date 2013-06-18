@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Flightlog Version 1.0</string>
+    <string name="app_name">Flightlog Version 1.04</string>
     <string name="menu_settings">Settings</string>
     <item type="string" name="databaseVersion" format="integer">1</item>
     
@@ -20,4 +20,6 @@
         <string name="youth">Jugendliche</string>
         <string name="stats">Statistik</string>
         <string name="structure">Altersstruktur</string>
+        <string name="separation_string">,</string>
+        <string name="separation">,</string>
 </resources>

@@ -62,12 +62,14 @@ public final class R {
         public static final int gewichtedit=0x7f0b0017;
         public static final int imageViewChoose=0x7f0b0022;
         public static final int imageViewList=0x7f0b0038;
+        public static final int importMod=0x7f0b003f;
         public static final int laenge=0x7f0b0031;
         public static final int laengeedit=0x7f0b0014;
         public static final int name=0x7f0b002a;
         public static final int nameLabel=0x7f0b0003;
         public static final int nameedit=0x7f0b0004;
         public static final int newbutton=0x7f0b0026;
+        public static final int options=0x7f0b0040;
         public static final int rc_data=0x7f0b0034;
         public static final int rc_dataedit=0x7f0b001a;
         public static final int savebutton=0x7f0b0024;
@@ -121,6 +123,8 @@ public final class R {
         public static final int search=0x7f08000a;
         public static final int search_hint=0x7f08000c;
         public static final int selection_header=0x7f080008;
+        public static final int separation=0x7f080011;
+        public static final int separation_string=0x7f080010;
         public static final int simple_header=0x7f080006;
         public static final int spinner_prompt=0x7f080003;
         public static final int spinner_prompt2=0x7f080005;
@@ -148,6 +152,8 @@ public final class R {
         public static final int AppTheme=0x7f090001;
     }
     public static final class xml {
-        public static final int searchable=0x7f040000;
+        public static final int preference_headers=0x7f040000;
+        public static final int preferences=0x7f040001;
+        public static final int searchable=0x7f040002;
     }
 }
