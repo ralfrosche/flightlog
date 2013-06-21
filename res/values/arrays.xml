@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
     <resources>
         <string-array name="typ">
-            <item >Motorflugzeug</item>
-            <item >Segler</item>
+            <item>Fesselflugmodell</item><item >Motorflugmodell</item>
+            <item >Segelflugmodell</item>
             <item >Hubschrauber</item>
-            <item >Hotliner</item>
+            
             <item >Quadrocopter</item>
+            
         </string-array>
         <string-array name="status">
             <item >aktiv</item>
             <item >verkauft</item>
             <item >defekt</item>
             <item >zerstört</item>
+        </string-array>
+        <string-array name="art">
+            <item >Verbennerflugmodell</item>
+            <item>Elektroflugmodell</item><item >Scaleflugmodell</item><item>Hotliner</item>
+            <item >Warbird</item>
+            <item >Trainer</item>
+            
+            <item >F3K Segler</item>
+            <item >Speedflieger</item>
+            <item >Combatmodell</item>
         </string-array>
     </resources>

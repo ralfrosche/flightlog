@@ -31,6 +31,8 @@ import android.widget.Toast;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
+	private static final String TABLE_NAME_VERSION = "version";
+	public static final String PROGRAMM_VERSION = "2";
 	private static String DB_PATH = "/data/data/com.rosche.flightlog/databases/";
 
 	public static String DB_NAME = "flightlog20130527";
@@ -40,7 +42,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static String separation = ",";
 
 	private final Context myContext;
+	public int actualVersion = 0;
+	
+	public ArrayList<String> upgrades = new ArrayList<String>();
 
+	
 	/**
 	 * Constructor Takes and keeps a reference of the passed context in order to
 	 * access to the application assets and resources.
@@ -51,6 +57,33 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		super(context, DB_NAME, null, 1);
 		this.myContext = context;
+		upgrades.clear();
+		upgrades.add("ALTER TABLE flightlog ADD COLUMN art text");
+		upgrades.add("ALTER TABLE flightlog ADD COLUMN hersteller text");
+	}
+	
+	public boolean upgradeDatabaseVersion(Context context) {
+		for (int i = actualVersion; i < upgrades.size(); i++ ) {
+			String sqlQuery = upgrades.get(i);
+			Log.e("MLISTE", "upgrade String:" + sqlQuery);
+
+			try {
+				SQLiteDatabase db = this.getWritableDatabase();
+
+				db.execSQL(sqlQuery);
+
+				db.close();
+				
+
+			} catch (SQLiteException e) {
+				Log.e("MLISTE", "+++ upgraded failed +++" + e);
+				return false;
+			}
+			
+			
+		}
+		return true;
+		
 	}
 
 	/**
@@ -81,6 +114,78 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	}
 
+	public boolean checkDatabaseVersion() {
+		String sqlDataStore = "create table if not exists " +
+				TABLE_NAME_VERSION + " (id integer primary key autoincrement,"
+		                 +" version text not null default '0')";
+		
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+
+			db.execSQL(sqlDataStore);
+
+			db.close();
+			
+
+		} catch (SQLiteException e) {
+			Log.e("MLISTE", "+++ upgraded failed +++" + e);
+			return false;
+		}
+		
+		String sqlQuery ="SELECT version from version WHERE 1 ORDER BY ID DESC LIMIT 1";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			
+			Cursor c = db.rawQuery(sqlQuery, null);
+			String version = "0";
+			if (c.moveToFirst()) {
+				do {
+
+					version = c.getString(c.getColumnIndex("version"));
+					Log.e("MLISTE", "+++ get version from database:" +version);
+		
+				} while (c.moveToNext());
+			}
+			c.close();
+			db.close();
+			actualVersion = Integer.parseInt(version);
+
+						
+			if (!version.equals(PROGRAMM_VERSION)){
+				// upgrade database
+				Log.e("MLISTE", "+++ upgraded database from:" +version+" to:" + PROGRAMM_VERSION);
+				// insert
+			
+				try {
+					db = this.getWritableDatabase();
+					String sqlQueryDelete ="DELETE from version WHERE 1";
+					sqlQuery ="INSERT INTO version  (version) VALUES ('"+PROGRAMM_VERSION+"')";
+					db.execSQL(sqlQueryDelete);
+					db.execSQL(sqlQuery);
+					db.close();
+					return true;
+					
+
+				} catch (SQLiteException e) {
+					Log.e("MLISTE", "+++ upgraded failed +++" + e);
+					return false;
+				}
+				
+			} else {
+				Log.e("MLISTE", "+++ no updgrade nescessary. db has version:" +version);
+				return false;
+			}
+		
+			
+
+		} catch (SQLiteException e) {
+			Log.e("MLISTE", "+++ upgraded failed +++" + e);
+			return false;
+		}
+		
+	
+		
+	}
 	public String[] ReadNRFromDB(String filter) {
 
 		ArrayList<String> temp_array = new ArrayList<String>();
@@ -241,7 +346,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public String[] ReadFromDB(String Selecteditem) {
 		String[] result_array;
 		result_array = Selecteditem.split(":");
-		String[] member_array = new String[11];
+		String[] member_array = new String[13];
 		String sqlQuery = "SELECT * FROM flightlog where id = '"
 				+ result_array[0] + "'";
 
@@ -265,6 +370,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 							.getColumnIndex("ausstattung"));
 					member_array[9] = c.getString(c.getColumnIndex("status"));
 					member_array[10] = c.getString(c.getColumnIndex("id"));
+					member_array[11] = c.getString(c.getColumnIndex("art"));
+					member_array[12] = c.getString(c.getColumnIndex("hersteller"));
 				} while (c.moveToNext());
 			}
 
@@ -356,9 +463,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 				Integer nextval = getId("flightlog");
 
-				String[] sarray = data.split(",");
+				String[] sarray = data.split(separation);
 				String sqlQuery = "";
-				if (sarray.length == 12) {
+				if (sarray.length == 14) {
 					StringBuilder sb = new StringBuilder(InsertString1);
 					String nameModel = sarray[1].replaceAll("\"", "").trim()
 							.toLowerCase(Locale.GERMANY);
@@ -374,6 +481,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						sb.append("\"" + sarray[8].replaceAll("\"", "") + "\",");
 						sb.append("\"" + sarray[9].replaceAll("\"", "") + "\",");
 						sb.append("\"" + sarray[10].replaceAll("\"", "") + "\"");
+						sb.append("\"" + sarray[11].replaceAll("\"", "") + "\"");
+						sb.append("\"" + sarray[12].replaceAll("\"", "") + "\"");
 						sb.append(InsertString2);
 
 						Log.e("MLISTE", "+++ SQL importCSV:" + sb.toString());
@@ -381,9 +490,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 						try {
 							SQLiteDatabase db = this.getWritableDatabase();
-
 							db.execSQL(sqlQuery);
-
 							db.close();
 
 						} catch (SQLiteException e) {
@@ -408,6 +515,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			}
 
 			br.close();
+			fr.close();
+			File file = new File(dir+inFilename);
+			file.delete();
 
 			return true;
 
@@ -415,7 +525,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 			Toast.makeText(context,
 					"ERROR:Import Model der Datenbank fehlgeschlagen!" + e,
-					Toast.LENGTH_SHORT).show();
+					Toast.LENGTH_LONG).show();
 			Log.e("MLISTE", "+++ ERROR exportDataBaseComplete +++" + e);
 			return false;
 		}
@@ -449,7 +559,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			header = '"' + "MODELL_ID" + '"' + separation;
 			header += '"' + "NAME" + '"' + separation;
 			header += '"' + "TYP" + '"' + separation;
+			header += '"' + "ART" + '"' + separation;
 			header += '"' + "BESCHREIBUNG" + '"' + separation;
+			header += '"' + "HERSTELLER" + '"' + separation;
 			header += '"' + "DATUM" + '"' + separation;
 			header += '"' + "SPANNWEITE" + '"' + separation;
 			header += '"' + "LAENGE" + '"' + separation;
@@ -474,7 +586,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						record += separation + '"'
 								+ c.getString(c.getColumnIndex("typ")) + '"';
 						record += separation + '"'
+								+ c.getString(c.getColumnIndex("art")) + '"';
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("beschreibung"))
+								+ '"';
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("hersteller"))
 								+ '"';
 						record += separation
 								+ c.getString(c.getColumnIndex("datum"));
@@ -580,7 +697,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			header = '"' + "MODELL_ID" + '"' + separation;
 			header += '"' + "NAME" + '"' + separation;
 			header += '"' + "TYP" + '"' + separation;
+			header += '"' + "ART" + '"' + separation;
 			header += '"' + "BESCHREIBUNG" + '"' + separation;
+			header += '"' + "HERSTELLER" + '"' + separation;
 			header += '"' + "DATUM" + '"' + separation;
 			header += '"' + "SPANNWEITE" + '"' + separation;
 			header += '"' + "LAENGE" + '"' + separation;
@@ -605,7 +724,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 						record += separation + '"'
 								+ c.getString(c.getColumnIndex("typ")) + '"';
 						record += separation + '"'
+								+ c.getString(c.getColumnIndex("art")) + '"';
+						record += separation + '"'
 								+ c.getString(c.getColumnIndex("beschreibung"))
+								+ '"';
+						record += separation + '"'
+								+ c.getString(c.getColumnIndex("hersteller"))
 								+ '"';
 						record += separation
 								+ c.getString(c.getColumnIndex("datum"));
@@ -858,7 +982,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public Integer insert(String[] params) {
 		Integer nextval = getId("flightlog");
 		String sqlQuery = "INSERT INTO flightlog (id,name,typ,beschreibung,"
-				+ "datum,spannweite,länge,gewicht,rcdata,ausstattung,status) VALUES ('"
+				+ "datum,spannweite,länge,gewicht,rcdata,ausstattung,status,art,hersteller) VALUES ('"
 				+ nextval + "'";
 		for (int i = 0; i < params.length; i++) {
 			if (params[i] != null) {
@@ -1062,7 +1186,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		sqlQuery += "gewicht='" + params[6] + "',";
 		sqlQuery += "rcdata='" + params[7] + "',";
 		sqlQuery += "ausstattung='" + params[8] + "',";
-		sqlQuery += "status='" + params[9] + "'";
+		sqlQuery += "status='" + params[9] + "',";
+		sqlQuery += "art='" + params[10] + "',";
+		sqlQuery += "hersteller='" + params[11] + "'";
 		sqlQuery += " WHERE id ='" + id + "'";
 		Log.e("MLISTE", "+++ updatedata +++" + sqlQuery);
 		try {

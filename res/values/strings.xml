@@ -22,4 +22,5 @@
         <string name="structure">Altersstruktur</string>
         <string name="separation_string">,</string>
         <string name="separation">,</string>
+        <string name="hersteller">Hersteller, Bauplan, Eigenkonstruktion</string>
 </resources>

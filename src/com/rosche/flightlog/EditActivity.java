@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -15,12 +17,14 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 
 import android.util.Log;
 import android.view.View;
@@ -44,10 +48,14 @@ public class EditActivity extends Activity {
 	private int mYear;
 	private int mMonth;
 	private int mDay;
+	public static SharedPreferences mPrefs;
 	ImageView imageViewChoose;
 	static final int DATE_DIALOG_ID = 0;
 	int column_index;
 	String image_path = "";
+	public String art_array = "Verbennerflugmodell,Elektroflugmodell,Scaleflugmodell,Hotliner,Warbird,Trainer,F3K Segler,Speedflieger,Combatmodell";
+	public String typ_array = "Fesselflugmodell,Motorflugmodell,Segelflugmodell,Hubschrauber,Quadrocopter";
+	public String status_array = "aktiv,verkauft,defekt,zerstört,unfertig";
 	Intent intent = null;
 	// Declare our Views, so we can access them later
 	String logo, imagePath, Logo;
@@ -72,18 +80,44 @@ public class EditActivity extends Activity {
 			editID = result_array[0].trim();
 			editMode = true;
 			try {
-
+				mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+				readPrefs();
 				EditText sname = (EditText) findViewById(R.id.nameedit);
 				EditText sbeschreibung = (EditText) findViewById(R.id.beschreibungedit);
+				EditText shersteller = (EditText) findViewById(R.id.hesrtelleredit);
 				EditText sdatum = (EditText) findViewById(R.id.dateedit);
 				EditText sspannweite = (EditText) findViewById(R.id.spannweiteedit);
 				EditText slaenge = (EditText) findViewById(R.id.laengeedit);
 				EditText sgewicht = (EditText) findViewById(R.id.gewichtedit);
 				EditText src_data = (EditText) findViewById(R.id.rc_dataedit);
 				EditText sausstattung = (EditText) findViewById(R.id.aussttungedit);
+				
+				
+				
 				Spinner styp = (Spinner) findViewById(R.id.typspinner);
+				Spinner sart = (Spinner) findViewById(R.id.artspinner);
 				Spinner sstatus = (Spinner) findViewById(R.id.statusspinner);
 
+				ArrayList<String> slist = new ArrayList<String>();
+				ArrayList<String> tlist = new ArrayList<String>();
+				ArrayList<String> alist = new ArrayList<String>();
+				ArrayAdapter<String> sadapter;
+				ArrayAdapter<String> tadapter;
+				ArrayAdapter<String> aadapter;
+				
+				slist.addAll(Arrays.asList(status_array.split("\\s*,\\s*")));
+				sadapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, slist);
+				sstatus.setAdapter(sadapter);
+
+				tlist.addAll(Arrays.asList(typ_array.split("\\s*,\\s*")));
+				tadapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tlist);
+				styp.setAdapter(tadapter);
+
+				alist.addAll(Arrays.asList(art_array.split("\\s*,\\s*")));
+				aadapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, alist);
+				sart.setAdapter(aadapter);
+				
+				
 				myDbHelper.createDataBase();
 				DataToDB = myDbHelper.ReadFromDB(query.trim());
 
@@ -97,6 +131,18 @@ public class EditActivity extends Activity {
 				for (int index = 0, count = myAdap.getCount(); index < count; ++index) {
 					if (myAdap.getItem(index).equals(myString)) {
 						styp.setSelection(index);
+						break;
+					}
+				}
+				
+				myString = DataToDB[11];
+				myAdap = (ArrayAdapter) sart.getAdapter(); // cast
+				// to an
+				// ArrayAdapter
+
+				for (int index = 0, count = myAdap.getCount(); index < count; ++index) {
+					if (myAdap.getItem(index).equals(myString)) {
+						sart.setSelection(index);
 						break;
 					}
 				}
@@ -116,6 +162,7 @@ public class EditActivity extends Activity {
 				sname.setText(DataToDB[0]);
 
 				sbeschreibung.setText(DataToDB[2]);
+				shersteller.setText(DataToDB[12]);
 				sdatum.setText(DataToDB[3]);
 				sspannweite.setText(DataToDB[4]);
 				slaenge.setText(DataToDB[5]);
@@ -139,11 +186,11 @@ public class EditActivity extends Activity {
 					if (file.exists()) {
 						imageViewChoose.setImageURI(mUri);
 					} else {
-						imageViewChoose.setImageResource(R.drawable.spitfire33);
+						imageViewChoose.setImageResource(R.drawable.no_photo);
 					}
 
 				} else {
-					imageViewChoose.setImageResource(R.drawable.spitfire33);
+					imageViewChoose.setImageResource(R.drawable.no_photo);
 				}
 
 			} catch (IOException ioe) {
@@ -184,11 +231,12 @@ public class EditActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				String[] params = new String[10];
+				String[] params = new String[12];
 				Integer id;
 				Integer idImage;
 				EditText sname = (EditText) findViewById(R.id.nameedit);
 				EditText sbeschreibung = (EditText) findViewById(R.id.beschreibungedit);
+				EditText shersteller = (EditText) findViewById(R.id.hesrtelleredit);
 				EditText sdatum = (EditText) findViewById(R.id.dateedit);
 				EditText sspannweite = (EditText) findViewById(R.id.spannweiteedit);
 				EditText slaenge = (EditText) findViewById(R.id.laengeedit);
@@ -196,6 +244,7 @@ public class EditActivity extends Activity {
 				EditText src_data = (EditText) findViewById(R.id.rc_dataedit);
 				EditText sausstattung = (EditText) findViewById(R.id.aussttungedit);
 				Spinner styp = (Spinner) findViewById(R.id.typspinner);
+				Spinner sart = (Spinner) findViewById(R.id.artspinner);
 				Spinner sstatus = (Spinner) findViewById(R.id.statusspinner);
 
 				params[0] = sname.getText().toString();
@@ -208,7 +257,9 @@ public class EditActivity extends Activity {
 				params[7] = src_data.getText().toString();
 				params[8] = sausstattung.getText().toString();
 				params[9] = sstatus.getSelectedItem().toString();
-
+				params[10] = sart.getSelectedItem().toString();
+				params[11] = shersteller.getText().toString();
+				
 				if (!params[0].equals("")) {
 
 					try {
@@ -272,7 +323,22 @@ public class EditActivity extends Activity {
 				new StringBuilder().append(mDay).append(".").append(mMonth + 1)
 						.append(".").append(mYear)));
 	}
-
+	public void readPrefs() {
+		String valueTmp = mPrefs.getString("typ_array", typ_array);
+		if (!valueTmp.equals("")) {
+			typ_array = valueTmp;
+		}
+		
+		valueTmp = mPrefs.getString("status_array", status_array);
+		if (!valueTmp.equals("")) {
+			status_array = valueTmp;
+		}
+		valueTmp = mPrefs.getString("art_array", art_array);
+		if (!valueTmp.equals("")) {
+			art_array = valueTmp;
+		}
+	
+	}
 	// the callback received when the user "sets" the date in the dialog
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
 

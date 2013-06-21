@@ -102,6 +102,31 @@
                     android:textAppearance="?android:attr/textAppearanceLarge" />
 
             </TableRow>
+                        <TableRow
+                android:id="@+id/tableRow13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="fill_horizontal"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/artLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="5dp"
+                    android:scrollHorizontally="true"
+                    android:text="Art:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/art"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
+            </TableRow>
 <View
     android:layout_width="fill_parent"
     android:layout_height="1dip"
@@ -135,6 +160,40 @@
                     android:layout_marginRight="10dp"
                     android:paddingRight="15dp"
                     android:textAppearance="?android:attr/textAppearanceLarge" />
+</ScrollView>
+            </TableRow>
+                 <TableRow
+                android:id="@+id/tableRow14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="fill_horizontal"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="5dp"
+                    android:text="Herst.:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+				 <ScrollView
+    android:id="@+id/SCROLLER_ID3"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical"
+    android:fillViewport="true">
+
+                <TextView
+                    android:id="@+id/hersteller"
+                    android:layout_width="202dp"
+                    android:layout_height="fill_parent"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1.0"
+                    android:hint="@string/hersteller"
+                    android:paddingRight="15dp"
+                    android:textAppearance="?android:attr/textAppearanceLarge" />
+
 </ScrollView>
             </TableRow>
 <View
@@ -369,7 +428,7 @@ android:layout_width="fill_parent"
                     android:layout_gravity="center_horizontal"
                     android:layout_span="2"
                     android:paddingLeft="10dp"
-                    android:src="@drawable/spitfire33" />
+                    android:src="@drawable/no_photo" />
 
             </TableRow>
             <View

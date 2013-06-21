@@ -64,8 +64,42 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
 		setContentView(R.layout.main);
-		initCustomListSpinner(filter);
+		try {
+			myDbHelper.createDataBase();
+			boolean upgrade = myDbHelper.checkDatabaseVersion();
+			if (upgrade == true) {
+				
+				myDbHelper.upgradeDatabaseVersion(getBaseContext());
+				Toast.makeText(getBaseContext(),
+						"Datenbank erfolgreich auf Version: "+myDbHelper.PROGRAMM_VERSION+ " gepatched", Toast.LENGTH_SHORT)
+						.show();
+				
+				
+			} else {
+				Toast.makeText(getBaseContext(),
+						"Datenbank hat aktuelle Version", Toast.LENGTH_SHORT)
+						.show();
+				
+			}
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+
 		handleIntent(getIntent());
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -130,6 +164,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 			}
 
 		});
+		initCustomListSpinner(filter);
 
 	}
 
@@ -481,7 +516,9 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 			DataToDB = myDbHelper.ReadFromDB(Selecteditem.trim());
 			TextView sname = (TextView) findViewById(R.id.name);
 			final TextView styp = (TextView) findViewById(R.id.typ);
+			final TextView sart = (TextView) findViewById(R.id.art);
 			final TextView sbeschreibung = (TextView) findViewById(R.id.beschreibung);
+			final TextView shersteller = (TextView) findViewById(R.id.hersteller);
 			final TextView sdatum = (TextView) findViewById(R.id.datum);
 			final TextView sspannweite = (TextView) findViewById(R.id.spannweite);
 			TextView slaenge = (TextView) findViewById(R.id.laenge);
@@ -501,6 +538,8 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 			sausstattung.setText(DataToDB[8]);
 			sstatus.setText(DataToDB[9]);
 			editID = DataToDB[10];
+			shersteller.setText(DataToDB[12]);
+			sart.setText(DataToDB[11]);
 
 			image_path = myDbHelper.getImage(Integer.parseInt(editID));
 			myDbHelper.close();
@@ -517,10 +556,10 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 					Log.e("MListe", "- updated model ID:" + f);
 					imageViewList.setImageURI(mUri);
 				} else {
-					imageViewList.setImageResource(R.drawable.spitfire33);
+					imageViewList.setImageResource(R.drawable.no_photo);
 				}
 			} else {
-				imageViewList.setImageResource(R.drawable.spitfire33);
+				imageViewList.setImageResource(R.drawable.no_photo);
 			}
 
 		} catch (IOException ioe) {

@@ -46,6 +46,7 @@
                     android:id="@+id/nameedit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:hint="Modellname"
                     android:layout_span="2" />
 
             </TableRow>
@@ -80,6 +81,33 @@
                     tools:listitem="@android:layout/simple_spinner_item" />
 
             </TableRow>
+               <TableRow
+                android:id="@+id/tableRow13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/artLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollHorizontally="false"
+                    android:text="Art:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <Spinner
+                    android:id="@+id/artspinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:dropDownWidth="fill_parent"
+                    android:entries="@array/art"
+                    android:prompt="@string/spinner_prompt"
+                    android:spinnerMode="dropdown"
+                     android:layout_span="2"
+                    tools:listitem="@android:layout/simple_spinner_item" />
+
+            </TableRow>
 <View
     android:layout_width="fill_parent"
     android:layout_height="1dip"
@@ -104,6 +132,37 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
                     android:layout_span="2"
+                    android:gravity="top"
+                    android:hint="Beschreibung"
+                    android:inputType="textMultiLine"
+                    android:lines="3"
+                    android:scrollHorizontally="true"
+                    android:scrollbarStyle="insideOverlay"
+                    android:scrollbars="vertical" />
+
+            </TableRow>
+              <TableRow
+                android:id="@+id/tableRow14"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/textView14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Herst.:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/hesrtelleredit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_span="2"
+                    android:gravity="top|center_vertical"
+                    android:hint="@string/hersteller"
                     android:inputType="textMultiLine"
                     android:lines="3"
                     android:scrollHorizontally="true"
@@ -133,7 +192,6 @@
                     android:id="@+id/dateedit"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-
                     android:inputType="date" />
 
                
@@ -169,6 +227,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                                 android:layout_span="2"
+                                android:hint="Spannweite"
                     android:layout_marginRight="5dp" />
 
             </TableRow>
@@ -196,6 +255,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                                 android:layout_span="2"
+                                android:hint="Rumpflänge"
                     android:layout_marginRight="5dp" />
 
             </TableRow>
@@ -223,6 +283,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                                 android:layout_span="2"
+                                android:hint="Gewicht (gr)"
                    android:layout_marginRight="5dp" />
             </TableRow>
 <View
@@ -249,9 +310,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
+                    android:layout_span="2"
+                    android:gravity="top"
+                    android:hint="RC-Einstellung"
                     android:inputType="textMultiLine"
                     android:lines="3"
-                                android:layout_span="2"
                     android:scrollHorizontally="true"
                     android:scrollbarStyle="insideOverlay"
                     android:scrollbars="vertical" />
@@ -281,9 +344,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="5dp"
-
-                                android:layout_span="2"
-                         android:inputType="textMultiLine"
+                    android:layout_span="2"
+                    android:gravity="top"
+                    android:hint="Ausstattung"
+                    android:inputType="textMultiLine"
                     android:lines="3"
                     android:scrollHorizontally="true"
                     android:scrollbarStyle="insideOverlay"
@@ -336,7 +400,7 @@
                     android:layout_gravity="center_horizontal"
                     android:layout_span="3"
                     android:paddingLeft="10dp"
-                    android:src="@drawable/spitfire33" />
+                    android:src="@drawable/no_photo" />
 
             </TableRow>
  <View
