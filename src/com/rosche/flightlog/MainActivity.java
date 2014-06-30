@@ -1,7 +1,12 @@
 package com.rosche.flightlog;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+
 import java.util.ArrayList;
 
 import java.util.List;
@@ -10,6 +15,7 @@ import java.util.regex.Pattern;
 import android.app.Activity;
 import android.app.AlertDialog;
 
+import android.app.ActivityManager;
 import android.app.SearchManager;
 import android.app.SearchManager.OnCancelListener;
 import android.app.SearchManager.OnDismissListener;
@@ -17,14 +23,20 @@ import android.app.SearchManager.OnDismissListener;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.SQLException;
 
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Debug;
+
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,7 +44,6 @@ import android.view.View;
 
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -43,19 +54,24 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 public class MainActivity extends Activity implements OnItemSelectedListener {
 
+	
 	private Spinner customListSpinner;
 	String[] DataToDB;
 	public static String separation = ",";
+	public static boolean show_image_on_start = false;
+	public int image_height = 200;
+	public int image_width = 300;
 	String[] result_array;
 	public static SharedPreferences mPrefs;
 	String Selecteditem;
 	Integer SelectedPosition = 0;
+	Integer SelectedPositionAtStartup = 0;
 	public String filter = "";
 	boolean searchInvolved = false;
+	private float padding;
 	private MenuItem mMenuItemSearch;
-
 	DatabaseHelper myDbHelper = new DatabaseHelper(this);
-
+	private boolean startup = true;
 	public final Pattern EMAIL_ADDRESS_PATTERN = Pattern
 			.compile("[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" + "\\@"
 					+ "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" + "(" + "\\."
@@ -66,105 +82,82 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.main);
+		Resources r = getResources();
+		padding = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8,
+				r.getDisplayMetrics());
+
 		try {
 			myDbHelper.createDataBase();
+		
+
 			boolean upgrade = myDbHelper.checkDatabaseVersion();
 			if (upgrade == true) {
-				
+
 				myDbHelper.upgradeDatabaseVersion(getBaseContext());
-				Toast.makeText(getBaseContext(),
-						"Datenbank erfolgreich auf Version: "+myDbHelper.PROGRAMM_VERSION+ " gepatched", Toast.LENGTH_SHORT)
-						.show();
-				
-				
+				Toast.makeText(
+						getBaseContext(),
+						"Datenbank  auf Version: "
+								+ myDbHelper.PROGRAMM_VERSION + " gepatched",
+						Toast.LENGTH_SHORT).show();
+
 			} else {
 				Toast.makeText(getBaseContext(),
 						"Datenbank hat aktuelle Version", Toast.LENGTH_SHORT)
 						.show();
-				
+
 			}
-			
-			
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 
 		handleIntent(getIntent());
 
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		readPrefs();
+		
+		ImageView imageViewList= null;
+		if (show_image_on_start == true) {
+			imageViewList = (ImageView) findViewById(R.id.imageViewList);
+			imageViewList.setVisibility(View.VISIBLE);
+		} else {
+			imageViewList = (ImageView) findViewById(R.id.imageViewList);
+			imageViewList.setVisibility(View.GONE);
+		}
+		Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
+		Debug.getMemoryInfo(memoryInfo);
 
-		Button editButton = (Button) findViewById(R.id.editbutton);
-		Button newButton = (Button) findViewById(R.id.newbutton);
-		Button delButton = (Button) findViewById(R.id.delbutton);
-
-		Button fButton = (Button) findViewById(R.id.flbutton);
-
-		editButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				launchEdit(true);
-			}
-
-		});
-
-		fButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				launchFlights();
-			}
-
-		});
-
-		newButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-				launchEdit(false);
-			}
-
-		});
-
-		delButton.setOnClickListener(new View.OnClickListener() {
-			String id = "";
-
-			@Override
-			public void onClick(View arg0) {
-
-				try {
-
-					myDbHelper.createDataBase();
-
-					id = myDbHelper.delete(Selecteditem);
-
-					Log.e("MListe", "- deleted ID:" + id);
-
-					myDbHelper.close();
-					initCustomListSpinner(filter);
-
-				} catch (IOException ioe) {
-
-					throw new Error("Unable to open database");
-
-				}
-
-			}
-
-		});
+		String memMessage = String.format(
+		    "Memory: Pss=%.2f MB, Private=%.2f MB, Shared=%.2f MB",
+		    memoryInfo.getTotalPss() / 1024.0,
+		    memoryInfo.getTotalPrivateDirty() / 1024.0,
+		    memoryInfo.getTotalSharedDirty() / 1024.0);
+		
+		
+		// Toast.makeText(getBaseContext(),memMessage, Toast.LENGTH_LONG) .show();
+	
 		initCustomListSpinner(filter);
+
+	}
+
+	private void doDelete() {
+		String id = "";
+
+		try {
+
+			myDbHelper.createDataBase();
+
+			id = myDbHelper.delete(Selecteditem);
+
+			myDbHelper.close();
+			initCustomListSpinner(filter);
+
+		} catch (IOException ioe) {
+
+			throw new Error("Unable to open database");
+
+		}
 
 	}
 
@@ -188,9 +181,6 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
 			@Override
 			public void onCancel() {
-
-				Log.e("MListe", "- Cancel-");
-
 			}
 		});
 
@@ -204,7 +194,6 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 	}
 
 	private void handleIntent(Intent intent) {
-		Log.e("MListe", "- HandleIntent-" + intent.getAction());
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
 			String query = intent.getStringExtra(SearchManager.QUERY);
 			doMySearch(query);
@@ -216,22 +205,71 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 		// TODO Auto-generated method stub
 		filter = query;
 		initCustomListSpinner(query);
-
-		Log.e("MListe", "- Query:-" + query);
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		String FILENAME = "flight_log_sav";
+		String string = String.valueOf(SelectedPosition);
+
+		FileOutputStream fos = null;
+		try {
+			fos = openFileOutput(FILENAME, Context.MODE_PRIVATE);
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			fos.write(string.getBytes());
+			fos.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		DatabaseHelper myDbHelper = new DatabaseHelper(this);
 		myDbHelper.close();
 	}
 
 	@Override
+	public void onStart() {
+		super.onStart();
+	
+		String FILENAME = "flight_log_sav";
+		byte[] bytes = new byte[] { 32, 32, 32, 32, 32, 32, 32 };
+		;
+		String str = "";
+		FileInputStream fis = null;
+		try {
+			fis = openFileInput(FILENAME);
+
+			try {
+				fis.read(bytes, 0, 7);
+				str = new String(bytes);
+				fis.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		if (!str.equals("") && Selecteditem == null) {
+			SelectedPosition = Integer.parseInt(str.trim());
+			SelectedPositionAtStartup = SelectedPosition;
+			Selecteditem = "new";
+		}
+
+	}
+
+	@Override
 	public void onResume() {
 		super.onResume();
-		Log.e("MListe", "- onresume-");
+
 		if (Selecteditem != null) {
 			if (!Selecteditem.equals("")) {
 				Integer tmpPosition = SelectedPosition;
@@ -240,8 +278,6 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 			}
 
 		}
-
-		// initCustomListSpinner(filter);
 
 	}
 
@@ -255,6 +291,14 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 
 			myDbHelper.createDataBase();
 			int dlength = 0;
+			if (startup == false) {
+				DataToDB = myDbHelper.ReadNRFromDB(filter);
+				if (DataToDB.length == 0) {
+					Toast.makeText(getBaseContext(),"Keine Daten gefunden", Toast.LENGTH_SHORT) .show();
+					
+				}
+				dlength = 99;
+			} 
 			while (dlength == 0) {
 				DataToDB = myDbHelper.ReadNRFromDB(filter);
 				dlength = DataToDB.length;
@@ -285,9 +329,8 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.activity_main, menu);
-		mMenuItemSearch = menu.getItem(0);
+		mMenuItemSearch = menu.getItem(3);
 
-		Log.e("MListe", "- OPtions menu created -");
 		return true;
 	}
 
@@ -303,6 +346,8 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 			if (searchS.equals("Filter entfernen")) {
 				mMenuItemSearch.setTitle("Suche / Filter");
 				initCustomListSpinner(filter);
+				SelectedPosition = SelectedPositionAtStartup;
+				customListSpinner.setSelection(SelectedPosition);
 
 			} else {
 				mMenuItemSearch.setTitle("Filter entfernen");
@@ -313,12 +358,32 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 		case R.id.version:
 			doVersion();
 			return true;
+		case R.id.mEdit:
+			launchEdit(true);
+			return true;
+		case R.id.mNew:
+			launchEdit(false);
+			return true;
+		case R.id.mDelete:
+			doDelete();
+			return true;
+		case R.id.mFligtData:
+			launchFlights();
+			return true;
+
 		case R.id.backup:
 			doBackup();
 			return true;
 		case R.id.export:
 			readPrefs();
 			doExport();
+			return true;
+		case R.id.help:
+			launchHelp();
+			return true;
+		case R.id.pics:
+			readPrefs();
+			doPics();
 			return true;
 		case R.id.options:
 			Intent intent = new Intent(this, PreferencesActivity.class);
@@ -333,16 +398,42 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 		return false;
 	}
 
+	private void launchHelp() {
+		Intent intent = new Intent(this, help.class);
+		startActivity(intent);
+	}
+
 	public void readPrefs() {
 		String valueTmp = mPrefs.getString("separation", separation);
 
-		Log.e("MListe", "SeparationOld:" + separation);
 		if (!valueTmp.equals("")) {
 			separation = valueTmp;
 		}
+		
+		show_image_on_start = mPrefs.getBoolean("show_image_on_start", false);
 
-		Log.e("MListe", "SeparationNew:" + valueTmp);
-
+	
+		/*
+		 * valueTmp = mPrefs.getString("image_width",
+		 * String.valueOf(image_width)); if (!valueTmp.equals("")) {
+		 * 
+		 * try { image_width = Integer.parseInt(valueTmp); } catch
+		 * (NumberFormatException e) {
+		 * 
+		 * }
+		 * 
+		 * 
+		 * } valueTmp = mPrefs.getString("image_height",
+		 * String.valueOf(image_height)); if (!valueTmp.equals("")) { try {
+		 * image_height = Integer.parseInt(valueTmp); } catch
+		 * (NumberFormatException e) {
+		 * 
+		 * }
+		 * 
+		 * }
+		 * 
+		 * Log.e("MListe", "SeparationNew:" + valueTmp);
+		 */
 	}
 
 	private void launchEdit(boolean edit) {
@@ -356,6 +447,12 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 		startActivity(intent);
 	}
 
+	private void doPics() {
+		Intent intent = new Intent(this, ImageGallery.class);
+		intent.putExtra("query", customListSpinner.getSelectedItem().toString());
+		startActivity(intent);
+	}
+
 	private void launchFlights() {
 		Intent intent = new Intent(this, Flights.class);
 		intent.putExtra("query", customListSpinner.getSelectedItem().toString());
@@ -364,18 +461,36 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 	}
 
 	private void doVersion() {
+		
+		String freeMemory = getMemoryInfo(this);
+		
+		Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
+		Debug.getMemoryInfo(memoryInfo);
+		String memMessage = String.format(
+			    "Pss=%.2f MB, Private=%.2f MB, Shared=%.2f MB",
+			    memoryInfo.getTotalPss() / 1024.0,
+			    memoryInfo.getTotalPrivateDirty() / 1024.0,
+			    memoryInfo.getTotalSharedDirty() / 1024.0);
+		String androidVersion = Build.VERSION.CODENAME + "("+Build.VERSION.RELEASE+")";
+		
 
+		
 		new AlertDialog.Builder(this)
 				.setTitle("Versionshinweis")
 				.setInverseBackgroundForced(false)
 				.setMessage(
 
-						"Flightlog V1.04\n" + "(c) 2013 Ralf Rosche\n"
+						"Flightlog V1.11\n" + "(c) 2013,2014 Ralf Rosche\n"
 								+ "Database Version: " + DatabaseHelper.DB_NAME
 								+ "\nKommerzielle Nutzung der Daten verboten!"
 								+ "\nVerbesserungsvorschläge willkommen!"
-								+ "\nmailto:aeroclub@gmx.net")
-				.show();
+								+ "\nmailto:aeroclub@gmx.net\n\n"
+								+"Memory Information:\n"
+								+memMessage
+								+"\nAndroid Version: "
+								+androidVersion
+								+"\n\n"
+								+freeMemory).show();
 	}
 
 	@Override
@@ -399,14 +514,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 			Toast.makeText(getBaseContext(),
 					"Backup der Datenbank erfolgreich!", Toast.LENGTH_SHORT)
 					.show();
-
 		} else {
 			Toast.makeText(getBaseContext(),
 					"ERROR:Backup der Datenbank fehlgeschlagen!",
 					Toast.LENGTH_SHORT).show();
-
 		}
-
 	}
 
 	public void doImport() {
@@ -421,16 +533,11 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 			e.printStackTrace();
 		}
 		if (Success) {
-			Toast.makeText(getBaseContext(),
-					"Import der Model Datenbank erfolgreich!",
-					Toast.LENGTH_SHORT).show();
 			initCustomListSpinner(filter);
-
 		} else {
 			Toast.makeText(getBaseContext(),
 					"ERROR:Import Model der Datenbank fehlgeschlagen!",
 					Toast.LENGTH_SHORT).show();
-
 		}
 	}
 
@@ -487,13 +594,13 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 		}
 		if (backupSuccess) {
 			Toast.makeText(getBaseContext(),
-					"Export der kompoletten Flight Tabelle erfolgreich!",
+					"Export der kompletten Flight Tabelle erfolgreich!",
 					Toast.LENGTH_SHORT).show();
 
 		} else {
 			Toast.makeText(
 					getBaseContext(),
-					"ERROR:Export der kompoletten Flight Tabelle fehlgeschlagen!",
+					"ERROR:Export der kompletten Flight Tabelle fehlgeschlagen!",
 					Toast.LENGTH_SHORT).show();
 
 		}
@@ -503,6 +610,34 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 	@Override
 	public void onNothingSelected(AdapterView<?> parent) {
 	}
+	
+	public static String getMemoryInfo(Context context) {
+	    StringBuffer memoryInfo = new StringBuffer();
+	    final ActivityManager activityManager = (ActivityManager) context
+	        .getSystemService(Context.ACTIVITY_SERVICE);
+
+	    ActivityManager.MemoryInfo outInfo = new ActivityManager.MemoryInfo();
+	    activityManager.getMemoryInfo(outInfo);
+	    memoryInfo.append("\nTotal Available Memory :")
+	        .append(outInfo.availMem >> 10).append("k");
+	    memoryInfo.append("\nTotal Available Memory :")
+	        .append(outInfo.availMem >> 20).append("M");
+	    memoryInfo.append("\nIn low memory situation:").append(
+	        outInfo.lowMemory);
+
+	    String result = null;
+	    CMDExecute cmdexe = new CMDExecute();
+	    try {
+	      String[] args = { "/system/bin/cat", "/proc/meminfo" };
+	      result = cmdexe.run(args, "/system/bin/");
+	    } catch (IOException ex) {
+	      Log.i("fetch_process_info", "ex=" + ex.toString());
+	    }
+
+	    return memoryInfo.toString() + "\n\n" + result;
+	  }
+	
+
 
 	public void RunDatabase() {
 		DatabaseHelper myDbHelper = new DatabaseHelper(this);
@@ -541,10 +676,20 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 			shersteller.setText(DataToDB[12]);
 			sart.setText(DataToDB[11]);
 
+			DisplayMetrics metrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+			int height = metrics.heightPixels;
+			int width = metrics.widthPixels;
+			image_width = width;
+			image_height = height;
 			image_path = myDbHelper.getImage(Integer.parseInt(editID));
 			myDbHelper.close();
 			imageViewList = (ImageView) findViewById(R.id.imageViewList);
-			Log.e("MListe", "- image:" + image_path);
+			imageViewList.setScaleType(ImageView.ScaleType.CENTER_CROP);
+			int columnWidth = (int) ((image_width - ((3 + 1) * padding)));
+			imageViewList.getLayoutParams().width = columnWidth;
+			imageViewList.getLayoutParams().height = 200;
 			if (!image_path.equals("")) {
 				Uri mUri;
 
@@ -553,7 +698,7 @@ public class MainActivity extends Activity implements OnItemSelectedListener {
 				File file = new File(f);
 				mUri = Uri.parse(f);
 				if (file.exists()) {
-					Log.e("MListe", "- updated model ID:" + f);
+
 					imageViewList.setImageURI(mUri);
 				} else {
 					imageViewList.setImageResource(R.drawable.no_photo);

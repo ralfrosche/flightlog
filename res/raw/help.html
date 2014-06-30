@@ -1,0 +1,116 @@
+<html>
+	<head>
+		<title>Help topics Flightlog 1.0</title>
+		<style type="text/css">
+body {
+  width: 310px;
+  margin-left: 10px;
+}
+.code {
+border: 1px solid black;
+background: #D1D0CE;
+margin-left: 0px;
+width: 290px;
+overflow : auto;
+}		</style>
+	</head>
+	<body>
+		<p>
+		<h3>Help topics Flightlog 1.11</h3><br />German version follows...</p>
+		<p>
+			<a href="#intro">Intro</a></p>
+		<p>
+			<a href="#first">First steps</a></p>
+		<p>
+			<a href="#details">Details (advanced functions)</a></p>
+		<p>
+			<a href="#feedback">Feedback</a></p>
+		<p>
+			<a href="#version">Version</a></p>
+		<p>
+
+		<a href="#export">Im-/Export Model Data</a></p>
+		<p>
+			<a href="#terms">Terms &amp; Conditions</a></p>
+		<p>
+			<a id="intro" name="intro"></a></p>
+		<h3>
+			Introduction</h3>
+		<p>
+			Flightlog was build to manage model data. This helps to retsore data in case of a new radio, or just for history. You can store model data and flights for each model, only limited by memory.</p>
+		<p>
+			<a id="first" name="first"></a></p>
+		<h3>
+			First steps</h3>
+		<p> pending...</p>
+
+
+		<p>
+			<a id="details" name="details"></a></p>
+		<h3>
+			Advanced Details settings and options</h3>
+			<p> pending...</p>
+		<p>
+			<a id="feedback" name="feedback"></a></p>
+		<h3>
+			Feedback</h3>
+		<p>
+			Any comments, feedback, suggestions on Flightlog please write to me using the link below. <a href="mailto:ralf.rosche@gmail.com">Contact support</a></p>
+		<p>
+			<a id="version" name="version"></a></p>
+		<h3>
+			Version I&iacute;nformation</h3>
+		<p>
+			Current verion is 1.11 build 06/2014.</p>
+		<p>
+			Running on android platform 2.3.6 and above.</p>
+		<p>
+			Tested on Sony Xperia X10 and Tipo, Samsung Galaxy Ace, S3, S4 (up to Android 4.3).</p>
+		<p>
+			On Android 4.x.x the new feature actionbar is used, the preferences, the speechtest and connect buttons are rendered in the title.</p>
+		<p>
+			Please disable in &#39;Developer Options&#39; the purge activity everey time checkbox, since this will restart the whole app when launching e.g. the preferences. It is only user selectable on some Android 4.0.4 devices.</p>
+<p>
+			<a id="export" name="export"></a></p>
+		<h3>
+			Import and Export of model data</h3>
+			<p>In menu options select export database, this will export three files in csv format which can be imported in any calc program such as Excel, OpenOffice and LibreOffice even editable in every texteditor.</p>
+			<p>Inspect your sdcard with a fileexplorer tool like Astro Dateimanager. The app will create a new directory under flight_log, which is named 'export'</p>
+			<p>The filename consists of a timestamp and a functional part which is model_data, flight_data and model_data_complete and the file extension 'csv'.</p>
+			<p>model_data contains only the model data each row one model. Take this file as a basis for later import.</p>
+			<p>flight_data contains all flights with a reference by name to the model data.</p>
+
+			<p>model_data_complete contains all data a row for the model data, with indentation as subsection the flightdata.</p>
+			<p>Set the correct delimter in options to ';', this is default and may be untouched.</p>
+			<p>Other progams need e.g. ','.</p>
+			<p>There is a minor bug in the excel import since version Excel 2003. The general RTF description for csv file format was the base for this export.</p>
+			<p>Excel handles the breaks within a cell not correct. Normally when you press ALT+ENTER in a cell this invokes a LINEFEED (HEX 0xA).</p>
+			<p>The delimiter for each row is a 0x0A as well so Excel will break and puts all data in a new row.</p>
+			<p>The Excel exports itself will fail, in case your reimport it into Excel again!</p>
+			<p>There is no workaround.</p>
+			<p>Other calculation programs such as OpenOffice calc treat the csv files in a correct way.</p>
+			<p>The import is only for importing model data, no flights can be imported at this time. May be in one of the next versions.</p>
+			<p>The base will be the model_data.csv file.</p>
+			<p>The file must contain a header and at least 14 fields. The naming of the headers doesn't care.</p>
+			<p>The 'Bild Pfad' (last field) will not be imported, so leave it blank.</p>
+			<p>If you like to import a field with more lines, add an ALT+ENTER at the end of the cell, which will invoke a carriage return.</p>
+			<p>This option will  be treated within the import into the database.</p>
+			<p>The ID (first field) is just for information purpose, it will be generated during import, so just don't care.</p>
+			<p>Put the file into a new directory called 'import' (casesensitive) under flight_log and name it model_data.csv</p>
+			<p>Select import modeldata from options menu and wait.</p>
+			<p>The imported model names will be displayed. There are some error messages:</p>
+			<p>File not found</p>
+			<p>Incorrect field count</p>
+			<p>general error</p>
+			<p>In any case test the correct setup of the import file.</p>
+			<p>The file will be deleted after successful import.</p>
+			<p>
+			<a id="terms" name="terms"></a></p>
+		<h3>
+			Terms &amp; Conditions</h3>
+		<p>
+			THIS SOFTWARE AND DOCUMENTATION IS PROVIDED &quot;AS IS,&quot; AND COPYRIGHT HOLDERS MAKE NO REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY PARTICULAR PURPOSE OR THAT THE USE OF THE SOFTWARE OR DOCUMENTATION WILL NOT INFRINGE ANY THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS. COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE SOFTWARE OR DOCUMENTATION.</p>
+		<p>
+			The name and trademarks of copyright holders may NOT be used in advertising or publicity pertaining to the software without specific, written prior permission. Title to copyright in this software and any associated documentation will at all times remain with copyright holders.</p>
+	</body>
+</html>

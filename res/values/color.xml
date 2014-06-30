@@ -3,6 +3,9 @@
     <color name="errorColor">#FF0000</color>
     <color name="White">#FFFFFF</color>
     <color name="Blue">#00FF00</color>
+        <color name="blue">#00abea</color>
+    <color name="white">#ffffff</color>
+        <color name="bg_light_blue">#EBF5FF</color>
     <drawable name="semitransparent_white">#77ffffff</drawable>
-    
+    <drawable name="semitransparent_red">#77ff0000</drawable>
 </resources>

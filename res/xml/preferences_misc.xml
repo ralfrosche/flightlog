@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="misc"
+    android:title="Miscellaneous" >
+    <CheckBoxPreference android:title="show image on start screen" android:key="show_image_on_start"/>
+
+</PreferenceScreen>

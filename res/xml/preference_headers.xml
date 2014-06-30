@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<preference-headers
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+ <header android:fragment="com.rosche.flightlog.PreferencesActivity$PrefsFragment"
+    android:icon="@android:drawable/ic_menu_sort_by_size"
+    android:title="CSV Export" >
+    <extra android:name="pref-resource" android:value="preferences" />
+</header>   
+ <header android:fragment="com.rosche.flightlog.PreferencesActivity$PrefsFragment"
+    android:icon="@android:drawable/ic_menu_sort_by_size"
+    android:title="Listen" >
+    <extra android:name="pref-resource" android:value="preferences_spinner" />
+</header>       
+ <header android:fragment="com.rosche.flightlog.PreferencesActivity$PrefsFragment"
+    android:icon="@android:drawable/ic_menu_sort_by_size"
+    android:title="Misc" >
+    <extra android:name="pref-resource" android:value="preferences_misc" />
+</header> 
+</preference-headers>

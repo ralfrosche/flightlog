@@ -1,9 +1,65 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <menu xmlns:android="http://schemas.android.com/apk/res/android">
-        
-        <item android:id="@+id/search" android:title="@string/search"></item><item android:id="@+id/version" android:title="@string/version"></item>
-        <item android:id="@+id/backup" android:title="Backup DB"></item>
-        <item android:id="@+id/export" android:title="Export DB"></item>
-        <item android:id="@+id/importMod" android:title="Import Models"></item><item android:id="@+id/options" android:title="Options"></item>
-        
-    </menu>
+     <item
+         android:icon="@drawable/edit_query"
+        android:id="@+id/mEdit"
+        android:title="Edit">
+    </item>
+       <item
+           android:icon="@drawable/ic_lock_airplane_mode"
+        android:id="@+id/mFligtData"
+                android:showAsAction="ifRoom"
+        android:title="Flight Data">
+    </item>
+       <item
+        android:id="@+id/mNew"
+        android:icon="@drawable/edit_query"
+        android:title="New">
+    </item>
+      <item
+        android:id="@+id/mDelete"
+        android:title="Delete">
+    </item>
+    <item
+         android:icon="@drawable/ic_menu_help"
+        android:id="@+id/search"
+        android:title="@string/search">
+    </item>
+    <item
+        android:id="@+id/version"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:title="@string/version">
+    </item>
+    <item
+        android:icon="@drawable/ic_menu_archive"
+        android:id="@+id/backup"
+        android:title="Backup DB">
+    </item>
+    <item
+        android:icon="@drawable/ic_menu_save"
+        android:id="@+id/export"
+        android:title="Export DB">
+    </item>
+    <item
+        android:icon="@drawable/edit_query"
+        android:id="@+id/importMod"
+        android:title="Import Models">
+    </item>
+    <item
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:id="@+id/options"
+        android:title="Options">
+    </item>
+        <item
+        android:icon="@drawable/ic_menu_help"
+        android:id="@+id/help"
+        android:title="Help">
+    </item>
+    <item
+        android:id="@+id/pics"
+        android:icon="@drawable/ic_menu_gallery"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="Pics"/>
+
+</menu>

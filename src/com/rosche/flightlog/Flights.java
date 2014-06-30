@@ -4,13 +4,23 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+
 import android.os.Bundle;
+import android.os.Handler;
+
 import android.util.Log;
+
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
+
+
+import android.widget.PopupWindow;
 
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -21,7 +31,12 @@ public class Flights extends Activity {
 	String modelID = "";
 	String editID = "";
 	boolean editMode = false;
+	View layout;
+	TextView tv;
+	TextView tvdate;
 	String query;
+	PopupWindow pw;
+
 	Integer flightId = 0;
 	DatabaseHelper myDbHelper = new DatabaseHelper(this);
 
@@ -29,6 +44,18 @@ public class Flights extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.flights);
+
+		LayoutInflater inflater = (LayoutInflater) this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		layout = inflater.inflate(R.layout.flightpopup, null);
+		
+
+		pw = new PopupWindow(layout, LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT, true);
+		pw.setOutsideTouchable(true);
+		
+		tv = (TextView) pw.getContentView().findViewById(R.id.flightTextView);
+		tvdate = (TextView) pw.getContentView().findViewById(R.id.dateTextView);
 		query = getIntent().getStringExtra("query");
 
 		if (!query.equals("")) {
@@ -96,6 +123,14 @@ public class Flights extends Activity {
 		}
 	}
 
+	final Handler handler = new Handler();
+	Runnable mLongPressed = new Runnable() {
+		public void run() {
+			Log.i("", "Long press!");
+			pw.showAsDropDown(layout);
+		}
+	};
+
 	private void getFlights(String query) {
 		String[] result_array;
 		result_array = query.split(":");
@@ -139,6 +174,8 @@ public class Flights extends Activity {
 				} else {
 					txt2.setText(flight_array.get(2));
 				}
+				final String flight_text = flight_array.get(2);
+				final String flight_date= flight_array.get(3);
 				final int fid = Integer.parseInt(flight_array.get(0));
 
 				if (i == 0) {
@@ -164,23 +201,38 @@ public class Flights extends Activity {
 				row.setBackgroundResource(R.drawable.selector);
 
 				row.setOnTouchListener(new View.OnTouchListener() {
-
+				boolean returncode = false;
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
 						final int action = event.getAction();
 
 						switch (action & MotionEvent.ACTION_MASK) {
+						case MotionEvent.ACTION_DOWN: {
+							handler.postDelayed(mLongPressed, 600);
+							Log.e("MLISTE", "toucheventdown:");
+							flightId = fid;
+							tv.setText(flight_text);
+							tvdate.setText(flight_date);
+							returncode = false;
+					
+							break;
+						}
 						case MotionEvent.ACTION_UP:
 						case MotionEvent.ACTION_CANCEL:
 						case MotionEvent.ACTION_OUTSIDE:
+						//case MotionEvent.ACTION_MOVE:
+							handler.removeCallbacks(mLongPressed);
 							flightId = fid;
-							Log.e("MLISTE", "flightID:" + flightId);
-
+							if (pw != null) {
+								pw.dismiss();
+							}
+							Log.e("MLISTE", "flightID_up_MOVE:" + flightId);
+							returncode = false;
 							break;
 						default:
-
+							returncode = false;
 						}
-						return false;
+						return returncode;
 					}
 
 				});
@@ -190,7 +242,7 @@ public class Flights extends Activity {
 					public void onClick(View arg0) {
 
 						flightId = fid;
-						Log.e("MLISTE", "flightID:" + flightId);
+						Log.e("MLISTE", "flightIDperia:" + flightId);
 					}
 				});
 

@@ -24,4 +24,13 @@
             <item >Speedflieger</item>
             <item >Combatmodell</item>
         </string-array>
+        <string-array name="anrede">
+            <item >Herr</item>
+            <item >Frau</item>
+        </string-array>
+        <string-array name="versicherung">
+            <item >1 Mio.</item>
+            <item >3 Mio.</item>
+        </string-array>
+  
     </resources>

@@ -1,31 +1,17 @@
 package com.rosche.flightlog;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
-
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -33,7 +19,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -49,7 +34,6 @@ public class EditActivity extends Activity {
 	private int mMonth;
 	private int mDay;
 	public static SharedPreferences mPrefs;
-	ImageView imageViewChoose;
 	static final int DATE_DIALOG_ID = 0;
 	int column_index;
 	String image_path = "";
@@ -57,14 +41,9 @@ public class EditActivity extends Activity {
 	public String typ_array = "Fesselflugmodell,Motorflugmodell,Segelflugmodell,Hubschrauber,Quadrocopter";
 	public String status_array = "aktiv,verkauft,defekt,zerstört,unfertig";
 	Intent intent = null;
-	// Declare our Views, so we can access them later
 	String logo, imagePath, Logo;
 	Cursor cursor;
-	// YOU CAN EDIT THIS TO WHATEVER YOU WANT
-	private static final int SELECT_PICTURE = 1;
-
 	String selectedImagePath;
-	// ADDED
 	String filemanagerstring;
 
 	@SuppressWarnings("rawtypes")
@@ -91,9 +70,7 @@ public class EditActivity extends Activity {
 				EditText sgewicht = (EditText) findViewById(R.id.gewichtedit);
 				EditText src_data = (EditText) findViewById(R.id.rc_dataedit);
 				EditText sausstattung = (EditText) findViewById(R.id.aussttungedit);
-				
-				
-				
+
 				Spinner styp = (Spinner) findViewById(R.id.typspinner);
 				Spinner sart = (Spinner) findViewById(R.id.artspinner);
 				Spinner sstatus = (Spinner) findViewById(R.id.statusspinner);
@@ -104,20 +81,22 @@ public class EditActivity extends Activity {
 				ArrayAdapter<String> sadapter;
 				ArrayAdapter<String> tadapter;
 				ArrayAdapter<String> aadapter;
-				
+
 				slist.addAll(Arrays.asList(status_array.split("\\s*,\\s*")));
-				sadapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, slist);
+				sadapter = new ArrayAdapter<String>(this,
+						android.R.layout.simple_spinner_item, slist);
 				sstatus.setAdapter(sadapter);
 
 				tlist.addAll(Arrays.asList(typ_array.split("\\s*,\\s*")));
-				tadapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, tlist);
+				tadapter = new ArrayAdapter<String>(this,
+						android.R.layout.simple_spinner_item, tlist);
 				styp.setAdapter(tadapter);
 
 				alist.addAll(Arrays.asList(art_array.split("\\s*,\\s*")));
-				aadapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, alist);
+				aadapter = new ArrayAdapter<String>(this,
+						android.R.layout.simple_spinner_item, alist);
 				sart.setAdapter(aadapter);
-				
-				
+
 				myDbHelper.createDataBase();
 				DataToDB = myDbHelper.ReadFromDB(query.trim());
 
@@ -134,12 +113,9 @@ public class EditActivity extends Activity {
 						break;
 					}
 				}
-				
+
 				myString = DataToDB[11];
 				myAdap = (ArrayAdapter) sart.getAdapter(); // cast
-				// to an
-				// ArrayAdapter
-
 				for (int index = 0, count = myAdap.getCount(); index < count; ++index) {
 					if (myAdap.getItem(index).equals(myString)) {
 						sart.setSelection(index);
@@ -149,8 +125,7 @@ public class EditActivity extends Activity {
 
 				myString = DataToDB[9];
 
-				myAdap = (ArrayAdapter) sstatus.getAdapter(); // cast to an
-																// ArrayAdapter
+				myAdap = (ArrayAdapter) sstatus.getAdapter();
 
 				for (int index = 0, count = myAdap.getCount(); index < count; ++index) {
 					if (myAdap.getItem(index).equals(myString)) {
@@ -171,28 +146,7 @@ public class EditActivity extends Activity {
 				sausstattung.setText(DataToDB[8]);
 				image_path = myDbHelper.getImage(Integer.parseInt(editID));
 				myDbHelper.close();
-				Log.e("MListe", "- inmage:" + image_path);
-				imageViewChoose = (ImageView) findViewById(R.id.imageViewChoose);
-
-				if (!image_path.equals("")) {
-					Uri mUri;
-					File sdCard = Environment.getExternalStorageDirectory();
-					String f = sdCard.getAbsolutePath() + "/" + image_path;
-
-					mUri = Uri.parse(f);
-					Log.e("MListe", "- updated model ID:" + f);
-					Log.e("MListe", "- updated model ID:" + mUri);
-					File file = new File(f);
-					if (file.exists()) {
-						imageViewChoose.setImageURI(mUri);
-					} else {
-						imageViewChoose.setImageResource(R.drawable.no_photo);
-					}
-
-				} else {
-					imageViewChoose.setImageResource(R.drawable.no_photo);
-				}
-
+						
 			} catch (IOException ioe) {
 
 				throw new Error("Unable to open database");
@@ -201,11 +155,34 @@ public class EditActivity extends Activity {
 
 		} else {
 			editMode = false;
+			Spinner styp = (Spinner) findViewById(R.id.typspinner);
+			Spinner sart = (Spinner) findViewById(R.id.artspinner);
+			Spinner sstatus = (Spinner) findViewById(R.id.statusspinner);
+			ArrayList<String> slist = new ArrayList<String>();
+			ArrayList<String> tlist = new ArrayList<String>();
+			ArrayList<String> alist = new ArrayList<String>();
+			ArrayAdapter<String> sadapter;
+			ArrayAdapter<String> tadapter;
+			ArrayAdapter<String> aadapter;
+
+			slist.addAll(Arrays.asList(status_array.split("\\s*,\\s*")));
+			sadapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_spinner_item, slist);
+			sstatus.setAdapter(sadapter);
+
+			tlist.addAll(Arrays.asList(typ_array.split("\\s*,\\s*")));
+			tadapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_spinner_item, tlist);
+			styp.setAdapter(tadapter);
+
+			alist.addAll(Arrays.asList(art_array.split("\\s*,\\s*")));
+			aadapter = new ArrayAdapter<String>(this,
+					android.R.layout.simple_spinner_item, alist);
+			sart.setAdapter(aadapter);
 		}
 
 		Button cancelButton = (Button) findViewById(R.id.cancelbutton);
 		Button saveButton = (Button) findViewById(R.id.savebutton);
-		imageViewChoose = (ImageView) findViewById(R.id.imageViewChoose);
 		cancelButton.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -213,18 +190,6 @@ public class EditActivity extends Activity {
 				finish();
 			}
 
-		});
-		imageViewChoose.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				Intent intent = new Intent();
-				intent.setType("image/*");
-				intent.setAction(Intent.ACTION_GET_CONTENT);
-				startActivityForResult(
-						Intent.createChooser(intent, "Select Picture"),
-						SELECT_PICTURE);
-
-			}
 		});
 
 		saveButton.setOnClickListener(new View.OnClickListener() {
@@ -259,7 +224,7 @@ public class EditActivity extends Activity {
 				params[9] = sstatus.getSelectedItem().toString();
 				params[10] = sart.getSelectedItem().toString();
 				params[11] = shersteller.getText().toString();
-				
+
 				if (!params[0].equals("")) {
 
 					try {
@@ -286,7 +251,7 @@ public class EditActivity extends Activity {
 
 					}
 				} else {
-					// show error
+					
 					Log.e("MListe", "- empty name:");
 				}
 			}
@@ -311,24 +276,25 @@ public class EditActivity extends Activity {
 		mMonth = c.get(Calendar.MONTH);
 		mDay = c.get(Calendar.DAY_OF_MONTH);
 
-		// display the current date (this method is below)
+
 		if (editMode != true)
 			updateDisplay();
 	}
 
-	// updates the date in the TextView
+
 	private void updateDisplay() {
 		mDateDisplay = (TextView) findViewById(R.id.dateedit);
 		mDateDisplay.setText(getString(R.string.strSelectedDate,
 				new StringBuilder().append(mDay).append(".").append(mMonth + 1)
 						.append(".").append(mYear)));
 	}
+
 	public void readPrefs() {
 		String valueTmp = mPrefs.getString("typ_array", typ_array);
 		if (!valueTmp.equals("")) {
 			typ_array = valueTmp;
 		}
-		
+
 		valueTmp = mPrefs.getString("status_array", status_array);
 		if (!valueTmp.equals("")) {
 			status_array = valueTmp;
@@ -337,9 +303,8 @@ public class EditActivity extends Activity {
 		if (!valueTmp.equals("")) {
 			art_array = valueTmp;
 		}
-	
 	}
-	// the callback received when the user "sets" the date in the dialog
+
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
 
 		@Override
@@ -362,91 +327,4 @@ public class EditActivity extends Activity {
 		return null;
 	}
 
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode == Activity.RESULT_OK) {
-			Bitmap newImage = null;
-			SimpleDateFormat dateFormat = new SimpleDateFormat(
-					"ddMMyyyyHHmmss", Locale.GERMANY);
-			image_path = "flight_log/" + dateFormat.format(new Date()) + ".jpg";
-			File sdCard = Environment.getExternalStorageDirectory();
-			File dir = new File(sdCard.getAbsolutePath() + "/flight_log");
-			dir.mkdir();
-
-			if (requestCode == SELECT_PICTURE) {
-				Uri selectedImageUri = data.getData();
-				try {
-					newImage = decodeUri(selectedImageUri);
-
-					saveBitmap(newImage, image_path);
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-				imageViewChoose = (ImageView) findViewById(R.id.imageViewChoose);
-
-				imageViewChoose.setImageBitmap(newImage);
-			}
-
-		}
-
-	}
-
-	private void saveBitmap(Bitmap newImage, String image_path) {
-		imageViewChoose = (ImageView) findViewById(R.id.imageViewChoose);
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		newImage.compress(Bitmap.CompressFormat.JPEG, 40, bytes);
-
-		File f = new File(Environment.getExternalStorageDirectory()
-				+ File.separator + image_path);
-		FileOutputStream fo = null;
-		try {
-			f.createNewFile();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// write the bytes in file
-
-		try {
-			fo = new FileOutputStream(f);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
-			fo.write(bytes.toByteArray());
-			fo.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		// remember close de FileOutput
-
-	}
-
-	private Bitmap decodeUri(Uri selectedImage) throws FileNotFoundException {
-		BitmapFactory.Options o = new BitmapFactory.Options();
-		o.inJustDecodeBounds = true;
-		BitmapFactory.decodeStream(
-				getContentResolver().openInputStream(selectedImage), null, o);
-		final int REQUIRED_SIZE = 200;
-		int width_tmp = o.outWidth, height_tmp = o.outHeight;
-		int scale = 1;
-		while (true) {
-			if (width_tmp / 2 < REQUIRED_SIZE || height_tmp / 2 < REQUIRED_SIZE) {
-				break;
-			}
-			width_tmp /= 2;
-			height_tmp /= 2;
-			scale *= 2;
-		}
-		BitmapFactory.Options o2 = new BitmapFactory.Options();
-		o2.inSampleSize = scale;
-		return BitmapFactory.decodeStream(
-				getContentResolver().openInputStream(selectedImage), null, o2);
-
-	}
 }

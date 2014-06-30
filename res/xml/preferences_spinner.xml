@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="spinner" android:title="Listen">
+        <PreferenceCategory android:key="cat" android:title="Listen"></PreferenceCategory><EditTextPreference android:defaultValue="Verbennerflugmodell,Elektroflugmodell,Scaleflugmodell,Hotliner,Warbird,Trainer,F3K Segler,Speedflieger,Combatmodell" android:title="Art" android:key="art_array"/>
+        <EditTextPreference android:title="Typ" android:key="typ_array" android:defaultValue="Fesselflugmodell,Motorflugmodell,Segelflugmodell,Hubschrauber,Quadrocopter"/>
+        <EditTextPreference android:title="Status" android:key="status_array" android:defaultValue="aktiv,verkauft,defekt,zerstört,unfertig"/>
+        
+        
+    </PreferenceScreen>

@@ -9,7 +9,7 @@
     <item
             android:state_focused="false"
             android:state_pressed="true"
-            android:drawable="@drawable/semitransparent_white" />
+            android:drawable="@drawable/semitransparent_red" />
      <item android:drawable="@android:drawable/list_selector_background"></item>
 
 </selector>

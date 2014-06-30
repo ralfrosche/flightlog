@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <dimen name="xLarge">12px</dimen>
     <dimen name="pad1">5px</dimen>
     <dimen name="xxLarge">2px</dimen>
+    <dimen name="popuptextsize">14px</dimen>
+ <dimen name="photo_width">100dp</dimen>
+    <dimen name="photo_height">100dp</dimen>
+
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    
+
 </resources>

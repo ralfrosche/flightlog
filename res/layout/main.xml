@@ -11,11 +11,13 @@
     <Spinner
         android:id="@+id/custom_list_spinner"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_gravity="center"
+        android:layout_marginBottom="10dp"
+        android:layout_weight="0.12"
         android:paddingLeft="10dp"
         android:paddingTop="5dp"
-        android:prompt="@string/spinner_prompt"
+        android:prompt="@string/spinner_prompt_modell"
         tools:listitem="@android:layout/simple_spinner_item" />
 
     <ScrollView
@@ -30,446 +32,445 @@
         android:scrollbars="vertical"
         android:textAlignment="center" >
 
- <HorizontalScrollView
-     android:layout_width="wrap_content"
-     android:layout_height="wrap_content" >
-
-        <TableLayout
-            android:id="@+id/tableLayout1"
+        <HorizontalScrollView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:baselineAligned="false"
-            android:fitsSystemWindows="false"
-            android:measureWithLargestChild="false"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp" >
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-            <TableRow
-                android:id="@+id/tableRow2"
+            android:layout_height="wrap_content" >
+
+            <TableLayout
+                android:id="@+id/tableLayout1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:clipChildren="false"
-                android:gravity="fill_horizontal"
+                android:baselineAligned="false"
+                android:fitsSystemWindows="false"
+                android:measureWithLargestChild="false"
                 android:orientation="horizontal"
-                android:paddingRight="@dimen/pad1"
-                android:paddingTop="@dimen/xxLarge" >
+                android:paddingLeft="10dp" >
 
-                <TextView
-                    android:id="@+id/nameLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="Name:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/name"
+                <View
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-            </TableRow>
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-            <TableRow
-                android:id="@+id/tableRow1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingTop="@dimen/xxLarge" >
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
 
-                <TextView
-                    android:id="@+id/typLabel"
+                <TableRow
+                    android:id="@+id/tableRow2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:scrollHorizontally="true"
-                    android:text="Typ:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
+                    android:clipChildren="false"
+                    android:gravity="fill_horizontal"
+                    android:orientation="horizontal"
+                    android:paddingRight="@dimen/pad1"
+                    android:paddingTop="@dimen/xxLarge" >
 
-                <TextView
-                    android:id="@+id/typ"
+                    <TextView
+                        android:id="@+id/nameLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:text="Name:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </TableRow>
+
+                <View
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
 
-            </TableRow>
-                        <TableRow
-                android:id="@+id/tableRow13"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingTop="@dimen/xxLarge" >
-
-                <TextView
-                    android:id="@+id/artLabel"
+                <TableRow
+                    android:id="@+id/tableRow1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:scrollHorizontally="true"
-                    android:text="Art:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
+                    android:gravity="fill_horizontal"
+                    android:paddingTop="@dimen/xxLarge" >
 
-                <TextView
-                    android:id="@+id/art"
+                    <TextView
+                        android:id="@+id/typLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:scrollHorizontally="true"
+                        android:text="Typ:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/typ"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </TableRow>
+
+                <View
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
 
-            </TableRow>
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-            <TableRow
-                android:id="@+id/tableRow3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingTop="@dimen/xxLarge" >
-
-                <TextView
-                    android:id="@+id/textView3"
+                <TableRow
+                    android:id="@+id/tableRow13"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="Beschr.:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-				 <ScrollView
-    android:id="@+id/SCROLLER_ID1"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:scrollbars="vertical"
-    android:fillViewport="true">
-                <TextView
-                    android:id="@+id/beschreibung"
+                    android:gravity="fill_horizontal"
+                    android:paddingTop="@dimen/xxLarge" >
+
+                    <TextView
+                        android:id="@+id/fmain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:scrollHorizontally="true"
+                        android:text="Art:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/art"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </TableRow>
+
+                <View
                     android:layout_width="fill_parent"
-       				 android:layout_height="fill_parent"
-       				android:layout_weight="1.0"
-                    android:layout_marginRight="10dp"
-                    android:paddingRight="15dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-</ScrollView>
-            </TableRow>
-                 <TableRow
-                android:id="@+id/tableRow14"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingTop="@dimen/xxLarge" >
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
 
-                <TextView
-                    android:id="@+id/textView14"
+                <TableRow
+                    android:id="@+id/tableRow3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="Herst.:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-				 <ScrollView
-    android:id="@+id/SCROLLER_ID3"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:scrollbars="vertical"
-    android:fillViewport="true">
+                    android:gravity="fill_horizontal"
+                    android:paddingTop="@dimen/xxLarge" >
 
-                <TextView
-                    android:id="@+id/hersteller"
-                    android:layout_width="202dp"
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:text="Beschr.:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <ScrollView
+                        android:id="@+id/SCROLLER_ID1"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fillViewport="true"
+                        android:scrollbars="vertical" >
+
+                        <TextView
+                            android:id="@+id/beschreibung"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1.0"
+                            android:paddingRight="15dp"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </ScrollView>
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
+
+                <TableRow
+                    android:id="@+id/tableRow14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="fill_horizontal"
+                    android:paddingTop="@dimen/xxLarge" >
+
+                    <TextView
+                        android:id="@+id/textView14"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:text="Herst.:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <ScrollView
+                        android:id="@+id/SCROLLER_ID3"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fillViewport="true"
+                        android:scrollbars="vertical" >
+
+                        <TextView
+                            android:id="@+id/hersteller"
+                            android:layout_width="202dp"
+                            android:layout_height="fill_parent"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1.0"
+                            android:paddingRight="15dp"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </ScrollView>
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
+
+                <TableRow
+                    android:id="@+id/tableRow4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="fill_horizontal"
+                    android:paddingTop="@dimen/xxLarge" >
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:text="Datum:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/datum"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="@dimen/pad1"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
+
+                <TableRow
+                    android:id="@+id/tableRow5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="fill_horizontal"
+                    android:paddingRight="@dimen/pad1"
+                    android:paddingTop="@dimen/xxLarge" >
+
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:text="Spannw.:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/spannweite"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fitsSystemWindows="true"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
+
+                <TableRow
+                    android:id="@+id/tableRow6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="fill_horizontal"
+                    android:paddingTop="@dimen/xxLarge" >
+
+                    <TextView
+                        android:id="@+id/textView6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:text="Länge:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/laenge"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fitsSystemWindows="true"
+                        android:paddingRight="@dimen/pad1"
+                        android:scrollHorizontally="true"
+                        android:scrollbarStyle="outsideOverlay"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
+
+                <TableRow
+                    android:id="@+id/tableRow7"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="fill_horizontal"
+                    android:paddingTop="@dimen/xxLarge" >
+
+                    <TextView
+                        android:id="@+id/textView7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:text="Gewicht:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/gewicht"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="10dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
+
+                <TableRow
+                    android:id="@+id/tableRow8"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="fill_horizontal"
+                    android:paddingTop="@dimen/xxLarge" >
+
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:text="RC Daten:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <ScrollView
+                        android:id="@+id/SCROLLER_ID2"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fillViewport="true"
+                        android:scrollbars="vertical" >
+
+                        <TextView
+                            android:id="@+id/rc_data"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_marginRight="10dp"
+                            android:layout_weight="1.0"
+                            android:scrollbarAlwaysDrawVerticalTrack="true"
+                            android:scrollbarStyle="insideOverlay"
+                            android:scrollbars="vertical"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </ScrollView>
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
+
+                <TableRow
+                    android:id="@+id/tableRow9"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="fill_horizontal"
+                    android:paddingTop="@dimen/xxLarge" >
+
+                    <TextView
+                        android:id="@+id/textView9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="5dp"
+                        android:text="Ausst.:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <ScrollView
+                        android:id="@+id/SCROLLER_ID3"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:fillViewport="true"
+                        android:scrollbars="vertical" >
+
+                        <TextView
+                            android:id="@+id/ausstattung"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent"
+                            android:layout_weight="1.0"
+                            android:scrollbarAlwaysDrawVerticalTrack="true"
+                            android:scrollbarStyle="insideOverlay"
+                            android:scrollbars="vertical"
+                            android:textAppearance="?android:attr/textAppearanceLarge" />
+                    </ScrollView>
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
+
+                <TableRow
+                    android:id="@+id/tableRow10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="fill_horizontal"
+                    android:paddingTop="@dimen/xxLarge" >
+
+                    <TextView
+                        android:id="@+id/textView10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Status:"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/status"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge" />
+                </TableRow>
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="1.0"
-                    android:hint="@string/hersteller"
-                    android:paddingRight="15dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
+                    android:fillViewport="true"
+                    android:scrollbars="vertical" >
 
-</ScrollView>
-            </TableRow>
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-            <TableRow
-                android:id="@+id/tableRow4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingTop="@dimen/xxLarge" >
+                    <com.rosche.flightlog.TouchImageView
+                        android:id="@+id/imageViewList"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:src="@drawable/no_photo"
+                        android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="Datum:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/datum"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="@dimen/pad1"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            </TableRow>
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-            <TableRow
-                android:id="@+id/tableRow5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingRight="@dimen/pad1"
-                android:paddingTop="@dimen/xxLarge" >
-
-                <TextView
-                    android:id="@+id/textView5"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="Spannw.:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/spannweite"
+                <View
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:fitsSystemWindows="true"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            </TableRow>
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-            <TableRow
-                android:id="@+id/tableRow6"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingTop="@dimen/xxLarge" >
-
-                <TextView
-                    android:id="@+id/textView6"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="Länge:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/laenge"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:fitsSystemWindows="true"
-                    android:paddingRight="@dimen/pad1"
-                    android:scrollHorizontally="true"
-                    android:scrollbarStyle="outsideOverlay"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-
-            </TableRow>
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-            <TableRow
-                android:id="@+id/tableRow7"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingTop="@dimen/xxLarge" >
-
-                <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="Gewicht:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/gewicht"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-            </TableRow>
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-            <TableRow
-                android:id="@+id/tableRow8"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingTop="@dimen/xxLarge" >
-
-                <TextView
-                    android:id="@+id/textView8"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="RC Daten:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-				 <ScrollView
-    android:id="@+id/SCROLLER_ID2"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:scrollbars="vertical"
-    android:fillViewport="true">
-                <TextView
-                    android:id="@+id/rc_data"
-android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1.0"
-                    android:layout_marginRight="10dp"
-                    android:scrollbarAlwaysDrawVerticalTrack="true"
-                    android:scrollbarStyle="insideOverlay"
-                    android:scrollbars="vertical"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-</ScrollView>
-            </TableRow>
-            
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-            <TableRow
-                android:id="@+id/tableRow9"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingTop="@dimen/xxLarge" >
-
-                <TextView
-                    android:id="@+id/textView9"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="5dp"
-                    android:text="Ausst.:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-				 <ScrollView
-    android:id="@+id/SCROLLER_ID3"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:scrollbars="vertical"
-    android:fillViewport="true">
-                <TextView
-                    android:id="@+id/ausstattung"
-android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1.0"
-                    android:scrollbarAlwaysDrawVerticalTrack="true"
-                    android:scrollbarStyle="insideOverlay"
-                    android:scrollbars="vertical"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-</ScrollView>
-            </TableRow>
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-            <TableRow
-                android:id="@+id/tableRow10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="fill_horizontal"
-                android:paddingTop="@dimen/xxLarge" >
-
-                <TextView
-                    android:id="@+id/textView10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Status:"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/status"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceLarge" />
-            </TableRow>
-<View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-
-            <TableRow
-                android:id="@+id/tableRow12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="center" >
-
-                <ImageView
-                    android:id="@+id/imageViewList"
-                    android:layout_width="300dp"
-                    android:layout_height="200dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_span="2"
-                    android:paddingLeft="10dp"
-                    android:src="@drawable/no_photo" />
-
-            </TableRow>
-            <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-        </TableLayout>
+                    android:layout_height="1dip"
+                    android:background="#FF00" />
+            </TableLayout>
         </HorizontalScrollView>
     </ScrollView>
-  <TableRow
-        android:id="@+id/tableRow11"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:visibility="visible" >
 
-      <Button
-          android:id="@+id/editbutton"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="Edit" />
-
-      <Button
-          android:id="@+id/flbutton"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="Flight Data" />
-
-      <Button
-          android:id="@+id/newbutton"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="New" />
-       <Button
-          android:id="@+id/delbutton"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="Del" />
-       
-    </TableRow>
-    
+   
 </LinearLayout>

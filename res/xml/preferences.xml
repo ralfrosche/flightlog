@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="csv_export"
+    android:title="Options" >
+
+    <PreferenceCategory
+        android:defaultValue=";"
+        android:key="csv"
+        android:title="Excel Export" >
+    </PreferenceCategory>
+
+    <EditTextPreference
+        android:defaultValue="@string/separation_string"
+        android:key="separation"
+        android:title="Trennzeichen" />
+
+</PreferenceScreen>

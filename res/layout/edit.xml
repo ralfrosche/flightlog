@@ -81,6 +81,12 @@
                     tools:listitem="@android:layout/simple_spinner_item" />
 
             </TableRow>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="#FF00" />
+
                <TableRow
                 android:id="@+id/tableRow13"
                 android:layout_width="wrap_content"
@@ -88,7 +94,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/artLabel"
+                    android:id="@+id/fmain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scrollHorizontally="false"
@@ -100,11 +106,11 @@
                     android:id="@+id/artspinner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_span="2"
                     android:dropDownWidth="fill_parent"
                     android:entries="@array/art"
-                    android:prompt="@string/spinner_prompt"
+                    android:prompt="@string/spinner_prompt_art"
                     android:spinnerMode="dropdown"
-                     android:layout_span="2"
                     tools:listitem="@android:layout/simple_spinner_item" />
 
             </TableRow>
@@ -141,6 +147,12 @@
                     android:scrollbars="vertical" />
 
             </TableRow>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="#FF00" />
+
               <TableRow
                 android:id="@+id/tableRow14"
                 android:layout_width="fill_parent"
@@ -383,27 +395,6 @@
                     tools:listitem="@android:layout/simple_spinner_item" />
             </TableRow>
 <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dip"
-    android:background="#FF00" />
-
-            <TableRow
-                android:id="@+id/tableRow12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAlignment="center" >
-
-                <ImageView
-                    android:id="@+id/imageViewChoose"
-                    android:layout_width="300dp"
-                    android:layout_height="200dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_span="3"
-                    android:paddingLeft="10dp"
-                    android:src="@drawable/no_photo" />
-
-            </TableRow>
- <View
     android:layout_width="fill_parent"
     android:layout_height="1dip"
     android:background="#FF00" />

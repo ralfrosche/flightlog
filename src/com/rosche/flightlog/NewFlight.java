@@ -2,6 +2,7 @@ package com.rosche.flightlog;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.StringTokenizer;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -83,7 +84,13 @@ public class NewFlight extends Activity {
 				params[0] = modelID;
 				params[1] = sbeschreibung.getText().toString();
 				params[2] = sdatum.getText().toString().trim();
-
+				
+				StringTokenizer date = new StringTokenizer(params[2], ".");
+				String day = date.nextToken();
+				String month = date.nextToken();
+				String year = date.nextToken();
+				params[2] = String.format("%02d", Integer.parseInt(day))+"."+String.format("%02d", Integer.parseInt(month))+"."+year;
+				
 				if (!params[0].equals("")) {
 
 					try {
