@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/xxLarge" >
+                  <TextView
+                    android:id="@+id/editLabelCustomTextAera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/fieldCustomTextAera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:layout_span="2"
+                    android:gravity="top|center_vertical"
+                    android:hint=""
+                    android:inputType="textMultiLine"
+                    android:lines="3"
+                    android:scrollHorizontally="true"
+                    android:scrollbarStyle="insideOverlay"
+                    android:scrollbars="vertical" />
+
+            </TableRow>

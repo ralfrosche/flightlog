@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="lables"
+    android:title="labels" >
+
+    <EditTextPreference
+        android:defaultValue="Beschr.:"
+        android:key="labelBeschreibung"
+        android:title="description" />
+    <EditTextPreference
+        android:defaultValue="Typ:"
+        android:key="labelTyp"
+        android:title="typ" />
+    <EditTextPreference
+        android:defaultValue="Art:"
+        android:key="labelArt"
+        android:title="category" />
+    <EditTextPreference
+        android:defaultValue="Datum:"
+        android:key="labelDatum"
+        android:title="date" />
+    <EditTextPreference
+        android:defaultValue="Status:"
+        android:key="labelStatus"
+        android:title="state" />
+    <EditTextPreference
+        android:defaultValue="Herst.:"
+        android:key="labelHersteller"
+        android:title="manufacturer" />
+    <EditTextPreference
+        android:defaultValue="Spannw.:"
+        android:key="labelSpannweite"
+        android:title="wingspan" />
+    <EditTextPreference
+        android:defaultValue="Länge:"
+        android:key="labelLaenge"
+        android:title="length" />
+    <EditTextPreference
+        android:defaultValue="Gewicht:"
+        android:key="labelGewicht"
+        android:title="weight" />
+    <EditTextPreference
+        android:defaultValue="RC Daten:"
+        android:key="labelRCdata"
+        android:title="rc data" />
+    <EditTextPreference
+        android:defaultValue="Ausst.:"
+        android:key="labelAusstattung"
+        android:title="equipment" />
+    <EditTextPreference
+        android:defaultValue="Anz.Flüge:"
+        android:key="labelNumberOfFlights"
+        android:title="number of flights" />
+
+</PreferenceScreen>

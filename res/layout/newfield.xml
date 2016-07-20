@@ -1,0 +1,181 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:baselineAligned="false"
+    android:fitsSystemWindows="false"
+    android:measureWithLargestChild="false"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.99" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            
+      <TableRow
+                android:id="@+id/tableRow500"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/labelFieldTyp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Typ:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <Spinner
+                    android:id="@+id/fieldTyp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    />
+
+            </TableRow>
+     
+                                        <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="@color/blue" />
+                  <TableRow
+                android:id="@+id/tableRow502"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/labelFieldLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Label:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/fieldlabel"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:scrollbarStyle="insideOverlay"
+                    android:scrollbars="vertical" />
+
+            </TableRow>
+                                        <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="@color/blue" />
+                  <TableRow
+                android:id="@+id/tableRow503"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/labelFieldHint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hint:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/fieldHint"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:scrollbarStyle="insideOverlay"
+                    android:scrollbars="vertical" />
+
+            </TableRow>
+                                                <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="@color/blue" />
+                  <TableRow
+                android:id="@+id/tableRow504"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/labelFieldVisible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Visible:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:id="@+id/fieldVisible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+
+            </TableRow>
+                                                    <View
+                android:layout_width="fill_parent"
+                 android:id="@+id/viewGlobal"
+                android:layout_height="1dip"
+                android:background="@color/blue" />
+                  <TableRow
+                android:id="@+id/tableRowGlobal"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/labelFieldGlobal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Global field:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <CheckBox
+                    android:id="@+id/fieldGlobal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="" />
+
+            </TableRow>
+      </LinearLayout>
+    </ScrollView>           
+
+<View
+    android:layout_width="fill_parent"
+    android:layout_height="1dip"
+    android:background="@color/blue" />
+
+  <TableRow
+      android:id="@+id/tableRow11"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal"
+      android:layout_marginTop="10dp"
+      android:gravity="center"
+      android:visibility="visible" >
+
+      <Button
+          android:id="@+id/fieldsavebutton"
+          style="@style/CustomButton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Save" />
+
+      <Button
+          android:id="@+id/fieldcancelbutton"
+          style="@style/CustomButton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="Cancel" />
+       
+    </TableRow>
+    
+</LinearLayout>

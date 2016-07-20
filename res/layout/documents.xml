@@ -1,0 +1,31 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LayoutDocuments"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:baselineAligned="true"
+    android:fitsSystemWindows="true"
+    android:measureWithLargestChild="true"
+    android:orientation="vertical"
+    android:scrollbars="horizontal|vertical" >
+
+    <ScrollView
+        android:id="@+id/scrollView2"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.99"
+        android:animateLayoutChanges="false"
+        android:overScrollMode="ifContentScrolls"
+        android:paddingLeft="10dp"
+        android:scrollbars="vertical" >
+
+        <TableLayout
+            android:id="@+id/tableLayout2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible" >
+
+        </TableLayout>
+    </ScrollView>
+
+</LinearLayout>

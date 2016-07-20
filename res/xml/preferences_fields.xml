@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="fields"
+    android:title="fields" >
+
+  <CheckBoxPreference android:title="hide description" android:key="hide_beschreibung" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide type" android:key="hide_type" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide category" android:key="hide_art" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide date" android:key="hide_datum" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide status" android:key="hide_status" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide manufacturer" android:key="hide_hersteller" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide wingspan" android:key="hide_spannweite" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide length" android:key="hide_laenge" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide weight" android:key="hide_gewicht" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide rc data" android:key="hide_rcdata" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide equipment" android:key="hide_ausstattung" android:defaultValue="false"/>
+<CheckBoxPreference android:title="hide number of flights" android:key="hide_numberOfFlights" android:defaultValue="false"/>
+
+    
+
+</PreferenceScreen>
