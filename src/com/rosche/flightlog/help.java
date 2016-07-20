@@ -15,50 +15,53 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class help extends Activity  {
+public class help extends Activity {
 	Context mContext = getBaseContext();
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-	   setContentView(R.layout.help);
-	   WebView help = (WebView)findViewById(R.id.helpView);
-	   help.setWebViewClient(new WebViewClient(){
-		@Override
-		public boolean shouldOverrideUrlLoading(WebView view, String url) {
-	 	   if(url.startsWith("mailto:")){
-			MailTo mt = MailTo.parse(url);
-			String uri = "mailto:" + mt.getTo();
-			Intent intent = new Intent(Intent.ACTION_SENDTO, Uri
-					.parse(uri));
-			intent.putExtra("compose_mode", true);
-			intent.putExtra(Intent.EXTRA_SUBJECT, "Hitec Telemetry feedback");
-			startActivity(intent);
-			return true;
-		   }
-		   else{
-			view.loadUrl(url);
-		   }
-		   return true;
-	      }
-	   });
+		setContentView(R.layout.help);
+		  getActionBar().setDisplayShowHomeEnabled(false);
+		WebView help = (WebView) findViewById(R.id.helpView);
+		help.setWebViewClient(new WebViewClient() {
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				if (url.startsWith("mailto:")) {
+					MailTo mt = MailTo.parse(url);
+					String uri = "mailto:" + mt.getTo();
+					Intent intent = new Intent(Intent.ACTION_SENDTO, Uri
+							.parse(uri));
+					intent.putExtra("compose_mode", true);
+					intent.putExtra(Intent.EXTRA_SUBJECT,
+							"Hitec Telemetry feedback");
+					startActivity(intent);
+					return true;
+				} else {
+					view.loadUrl(url);
+				}
+				return true;
+			}
+		});
 
-	   String helpText = readRawTextFile(R.raw.help); 
-	   help.loadData(helpText, "text/html; charset=utf-8", "utf-8");
+		String helpText = readRawTextFile(R.raw.help);
+		help.loadData(helpText, "text/html; charset=utf-8", "utf-8");
 	}
 
 	private String readRawTextFile(int id) {
-	   InputStream inputStream = getBaseContext().getResources().openRawResource(id);
-	   InputStreamReader in = new InputStreamReader(inputStream);
-	   BufferedReader buf = new BufferedReader(in);
-	   String line;
-	   StringBuilder text = new StringBuilder();
-	   try {
-	      while (( line = buf.readLine()) != null) 
-		text.append(line);
-	   } catch (IOException e) {
-	     return null;
-	   }
-	   return text.toString();
+		InputStream inputStream = getBaseContext().getResources()
+				.openRawResource(id);
+		InputStreamReader in = new InputStreamReader(inputStream);
+		BufferedReader buf = new BufferedReader(in);
+		String line;
+		StringBuilder text = new StringBuilder();
+		try {
+			while ((line = buf.readLine()) != null)
+				text.append(line);
+		} catch (IOException e) {
+			return null;
+		}
+		return text.toString();
 	}
 
 }

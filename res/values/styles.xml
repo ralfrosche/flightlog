@@ -4,7 +4,7 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
+    <style name="AppBaseTheme" parent="@android:style/Theme.Holo.Light">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to
@@ -17,5 +17,76 @@
         <item name="android:textColor">#ffffff</item>
         <item name="android:textSize">18sp</item>
     </style>
+ <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
 
+        <!-- For the resting Spinner style -->
+        <item name="android:spinnerItemStyle">
+            @style/spinnerItemStyle
+        </item> 
+
+        <!-- For each individual Spinner list item once clicked on -->
+        <item name="android:spinnerDropDownItemStyle">
+            @style/spinnerDropDownItemStyle
+        </item>
+
+    </style>
+
+    <style name="spinnerItemStyle">
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FF0000</item>
+    </style>
+
+    <style name="spinnerDropDownItemStyle">
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FF0000</item>
+    </style>
+    
+   <style name="AppBaseThemeDark" parent="@android:style/Theme.DeviceDefault">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+
+ <!-- Application theme. -->
+    <style name="AppThemeDark" parent="AppBaseThemeDark">
+
+        <!-- For the resting Spinner style -->
+        <item name="android:spinnerItemStyle">
+            @style/spinnerItemStyleDark
+        </item> 
+
+        <!-- For each individual Spinner list item once clicked on -->
+        <item name="android:spinnerDropDownItemStyle">
+            @style/spinnerDropDownItemStyleDark
+        </item>
+
+    </style>
+        <style name="spinnerItemStyleDark">
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
+    <style name="spinnerDropDownItemStyleDark">
+        <item name="android:padding">5dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+    
+        <style name="CustomButton">
+        <item name="android:layout_margin">1dp</item>
+        <item name="android:paddingTop">0dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:layout_width">60dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/selector_custom_button</item>
+    </style>
+    
 </resources>

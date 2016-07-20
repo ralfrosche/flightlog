@@ -39,6 +39,7 @@ public class CustomGalleryActivity extends Activity {
 	Button btnGalleryOk;
 
 	String action;
+	String picture_path = "Pictures";
 	private ImageLoader imageLoader;
 
 	@Override
@@ -51,6 +52,7 @@ public class CustomGalleryActivity extends Activity {
 		if (action == null) {
 			finish();
 		}
+		picture_path = getIntent().getStringExtra("picture_path");
 		initImageLoader();
 		init();
 	}
@@ -98,7 +100,7 @@ public class CustomGalleryActivity extends Activity {
 			gridGallery.setOnItemClickListener(mItemMulClickListener);
 			adapter.setMultiplePick(true);
 
-		} 
+		}
 
 		gridGallery.setAdapter(adapter);
 		imgNoMedia = (ImageView) findViewById(R.id.imgNoMedia);
@@ -178,10 +180,9 @@ public class CustomGalleryActivity extends Activity {
 			final String[] columns = { MediaStore.Images.Media.DATA,
 					MediaStore.Images.Media._ID };
 			final String orderBy = MediaStore.Images.Media._ID;
-
-			Cursor imagecursor = managedQuery(
+			Cursor imagecursor = getContentResolver().query(
 					MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns,
-					null, null, orderBy);
+					MediaStore.Images.Media.DATA + " like ? ",    new String[] {"%"+picture_path+"%"}, orderBy);
 
 			if (imagecursor != null && imagecursor.getCount() > 0) {
 

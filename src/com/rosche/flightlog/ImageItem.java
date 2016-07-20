@@ -29,7 +29,7 @@ public class ImageItem {
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public String getimagePath() {
 		return imagePath;
 	}
@@ -37,6 +37,7 @@ public class ImageItem {
 	public void setimagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
+
 	public void setTitle(String title) {
 		this.title = title;
 	}

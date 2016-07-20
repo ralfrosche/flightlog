@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 
-
 import android.widget.PopupWindow;
 
 import android.widget.TableLayout;
@@ -44,16 +43,16 @@ public class Flights extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.flights);
+		  getActionBar().setDisplayShowHomeEnabled(false);
 
 		LayoutInflater inflater = (LayoutInflater) this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		layout = inflater.inflate(R.layout.flightpopup, null);
-		
 
 		pw = new PopupWindow(layout, LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT, true);
 		pw.setOutsideTouchable(true);
-		
+
 		tv = (TextView) pw.getContentView().findViewById(R.id.flightTextView);
 		tvdate = (TextView) pw.getContentView().findViewById(R.id.dateTextView);
 		query = getIntent().getStringExtra("query");
@@ -175,7 +174,7 @@ public class Flights extends Activity {
 					txt2.setText(flight_array.get(2));
 				}
 				final String flight_text = flight_array.get(2);
-				final String flight_date= flight_array.get(3);
+				final String flight_date = flight_array.get(3);
 				final int fid = Integer.parseInt(flight_array.get(0));
 
 				if (i == 0) {
@@ -201,7 +200,8 @@ public class Flights extends Activity {
 				row.setBackgroundResource(R.drawable.selector);
 
 				row.setOnTouchListener(new View.OnTouchListener() {
-				boolean returncode = false;
+					boolean returncode = false;
+
 					@Override
 					public boolean onTouch(View v, MotionEvent event) {
 						final int action = event.getAction();
@@ -214,13 +214,13 @@ public class Flights extends Activity {
 							tv.setText(flight_text);
 							tvdate.setText(flight_date);
 							returncode = false;
-					
+
 							break;
 						}
 						case MotionEvent.ACTION_UP:
 						case MotionEvent.ACTION_CANCEL:
 						case MotionEvent.ACTION_OUTSIDE:
-						//case MotionEvent.ACTION_MOVE:
+							// case MotionEvent.ACTION_MOVE:
 							handler.removeCallbacks(mLongPressed);
 							flightId = fid;
 							if (pw != null) {

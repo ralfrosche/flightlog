@@ -14,7 +14,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/TextView01"
+                    android:id="@+id/flabelDatum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Datum:"
@@ -42,6 +42,32 @@
                 android:layout_height="1dip"
                 android:background="#FF00" />
 
+            
+      <TableRow
+                android:id="@+id/tableRow99"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/xxLarge" >
+
+                <TextView
+                    android:id="@+id/flabelNumberOfFlights"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Flüge.:"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textStyle="bold" />
+
+                <Spinner
+                    android:id="@+id/flightCountSpinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/flightCounts" />
+
+            </TableRow>
+                            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dip"
+                android:background="#FF00" />
             <TableRow
                 android:id="@+id/tableRow3"
                 android:layout_width="fill_parent"
@@ -50,7 +76,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/flabelBeschreibung"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Beschr.:"
@@ -71,13 +97,13 @@
                     android:scrollbars="vertical" />
 
             </TableRow>
+            
+            
 <View
     android:layout_width="fill_parent"
     android:layout_height="1dip"
     android:background="#FF00" />
      
-
->
 
   <TableRow
       android:id="@+id/tableRow11"

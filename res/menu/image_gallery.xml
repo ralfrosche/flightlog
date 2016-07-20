@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:id="@+id/take_picture" android:title="Take Picture" android:titleCondensed="Picture" android:icon="@drawable/ic_menu_gallery"></item>
-    <item android:id="@+id/import_picture" android:title="Import  one picture" android:titleCondensed="Import" android:icon="@drawable/edit_query"></item>
-    <item android:id="@+id/import_multiple_pictures" android:icon="@drawable/edit_query" android:title="Import multiple pictures"></item>
+    <item android:id="@+id/take_picture" android:title="Take Picture" android:titleCondensed="Picture" android:icon="@drawable/fotoapparat" android:showAsAction="ifRoom"></item>
+    <item android:id="@+id/import_picture" android:title="Import  one picture" android:titleCondensed="Import" android:icon="@drawable/datei_upload" android:showAsAction="ifRoom"></item>
+    <item android:id="@+id/import_multiple_pictures" android:icon="@drawable/fileexplorer" android:title="Import multiple pictures" android:showAsAction="ifRoom"></item>
     
 
 </menu>

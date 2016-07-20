@@ -8,12 +8,22 @@
 </header>   
  <header android:fragment="com.rosche.flightlog.PreferencesActivity$PrefsFragment"
     android:icon="@android:drawable/ic_menu_sort_by_size"
-    android:title="Listen" >
+    android:title="Lists" >
     <extra android:name="pref-resource" android:value="preferences_spinner" />
 </header>       
  <header android:fragment="com.rosche.flightlog.PreferencesActivity$PrefsFragment"
     android:icon="@android:drawable/ic_menu_sort_by_size"
     android:title="Misc" >
     <extra android:name="pref-resource" android:value="preferences_misc" />
+</header> 
+ <header android:fragment="com.rosche.flightlog.PreferencesActivity$PrefsFragment"
+    android:icon="@android:drawable/ic_menu_sort_by_size"
+    android:title="Labels" >
+    <extra android:name="pref-resource" android:value="preferences_labels" />
+</header> 
+ <header android:fragment="com.rosche.flightlog.PreferencesActivity$PrefsFragment"
+    android:icon="@android:drawable/ic_menu_sort_by_size"
+    android:title="Fields" >
+    <extra android:name="pref-resource" android:value="preferences_fields" />
 </header> 
 </preference-headers>

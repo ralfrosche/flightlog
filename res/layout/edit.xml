@@ -18,7 +18,7 @@
         android:scrollbars="vertical" >
 
         <TableLayout
-            android:id="@+id/tableLayout1"
+            android:id="@+id/tableLayoutEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:baselineAligned="false"
@@ -61,7 +61,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/typLabel"
+                    android:id="@+id/edittypLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scrollHorizontally="false"
@@ -94,7 +94,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/fmain"
+                    android:id="@+id/editlabelfmain"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:scrollHorizontally="false"
@@ -125,7 +125,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/editLabelBeschreibung"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Beschr.:"
@@ -160,7 +160,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/textView14"
+                    android:id="@+id/editlabelHersteller"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Herst.:"
@@ -193,7 +193,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/TextView01"
+                    android:id="@+id/editlabelDatum"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Datum:"
@@ -227,7 +227,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/textView5"
+                    android:id="@+id/editlabelSpannweite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Spannw.:"
@@ -254,7 +254,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/textView6"
+                    android:id="@+id/editlabellaenge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="1dp"
@@ -282,7 +282,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/textView7"
+                    android:id="@+id/editlabelGewicht"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="1dp"
@@ -309,7 +309,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/textView8"
+                    android:id="@+id/editlabelRCdata"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="1dp"
@@ -343,7 +343,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/textView9"
+                    android:id="@+id/editlabelAusstattung"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="1dp"
@@ -377,7 +377,7 @@
                 android:paddingTop="@dimen/xxLarge" >
 
                 <TextView
-                    android:id="@+id/textView10"
+                    android:id="@+id/editlabelStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Status:"

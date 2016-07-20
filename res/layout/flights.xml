@@ -1,6 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@id/fmain"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:baselineAligned="true"
@@ -37,27 +36,32 @@
 
         <Button
             android:id="@+id/newbutton"
+            style="@style/CustomButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="New" />
 
         <Button
             android:id="@+id/editflbutton"
+            style="@style/CustomButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Edit" />
 
         <Button
             android:id="@+id/delbutton"
+            style="@style/CustomButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Delete" />
 
         <Button
             android:id="@+id/cancelbutton"
+            style="@style/CustomButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancel" />
+
     </TableRow>
 
 </LinearLayout>

@@ -69,10 +69,9 @@ public class PreferencesActivity extends PreferenceActivity {
 			addPreferencesFromResource(thePrefRes);
 		}
 	}
+
 	@Override
 	public synchronized void onResume() {
 		super.onResume();
-		
-		Log.e("HITEC TELEMETRY", "+ ON RESUME in prefs+");
 	}
 }

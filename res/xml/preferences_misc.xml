@@ -2,6 +2,36 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="misc"
     android:title="Miscellaneous" >
-    <CheckBoxPreference android:title="show image on start screen" android:key="show_image_on_start"/>
-
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="show_image_on_start"
+        android:title="show image on start screen" />
+    <EditTextPreference
+        android:defaultValue="Pictures"
+        android:key="picture_path"
+        android:title="picture path" />
+    <EditTextPreference
+        android:key="document_path"
+        android:title="document path" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="crop"
+        android:title="crop image" android:enabled="false" android:selectable="false" android:shouldDisableView="false"/>
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="sizeDown"
+        android:title="size image (small memory only)" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="darkTheme"
+        android:title="use default theme" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="hide_empty_fields"
+        android:title="hide empty fields" />
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="select_acticve_only"
+        android:title="select acticve only" />
+    <CheckBoxPreference android:title="use internal cropping" android:key="use_internal_cropping" android:defaultValue="false"/>
 </PreferenceScreen>

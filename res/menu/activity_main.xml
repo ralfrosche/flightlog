@@ -3,7 +3,7 @@
      <item
          android:icon="@drawable/edit_query"
         android:id="@+id/mEdit"
-        android:title="Edit">
+        android:title="Edit model">
     </item>
        <item
            android:icon="@drawable/ic_lock_airplane_mode"
@@ -14,52 +14,44 @@
        <item
         android:id="@+id/mNew"
         android:icon="@drawable/edit_query"
-        android:title="New">
+        android:title="New model">
     </item>
       <item
         android:id="@+id/mDelete"
-        android:title="Delete">
+        android:title="Delete model">
     </item>
-    <item
+    <item android:id="@+id/docs" android:title="Documents" android:icon="@drawable/documents_icon" android:showAsAction="ifRoom"></item><item android:id="@+id/pics" android:icon="@drawable/ic_menu_gallery" android:showAsAction="ifRoom" android:title="Images" /><item android:icon="@android:drawable/ic_menu_preferences" android:id="@+id/options" android:title="Options">
+    </item><item
          android:icon="@drawable/ic_menu_help"
         android:id="@+id/search"
         android:title="@string/search">
-    </item>
-    <item
-        android:id="@+id/version"
-        android:icon="@android:drawable/ic_menu_info_details"
-        android:title="@string/version">
-    </item>
+    </item><item android:id="@+id/customFields" android:title="Custom fields" android:icon="@drawable/edit_query"></item>
+    
     <item
         android:icon="@drawable/ic_menu_archive"
         android:id="@+id/backup"
-        android:title="Backup DB">
+        android:title="Backup database">
     </item>
-    <item
+    <item android:id="@+id/restore" android:title="Restore database" android:icon="@drawable/ic_menu_archive"></item><item
         android:icon="@drawable/ic_menu_save"
         android:id="@+id/export"
-        android:title="Export DB">
+        android:title="Export database">
     </item>
     <item
         android:icon="@drawable/edit_query"
         android:id="@+id/importMod"
-        android:title="Import Models">
+        android:title="Import models">
     </item>
-    <item
-        android:icon="@android:drawable/ic_menu_preferences"
-        android:id="@+id/options"
-        android:title="Options">
-    </item>
+    
         <item
         android:icon="@drawable/ic_menu_help"
         android:id="@+id/help"
         android:title="Help">
     </item>
-    <item
-        android:id="@+id/pics"
-        android:icon="@drawable/ic_menu_gallery"
-        android:orderInCategory="100"
-        android:showAsAction="ifRoom"
-        android:title="Pics"/>
+    <item android:id="@+id/version" android:icon="@android:drawable/ic_menu_info_details" android:title="@string/version">
+    </item>
+    
+    
+    
 
 </menu>

@@ -1,5 +1,6 @@
 package com.rosche.flightlog;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,26 +20,38 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
+import android.util.Log;
 import android.widget.Toast;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String TABLE_NAME_VERSION = "version";
-	public static final String PROGRAMM_VERSION = "2";
+	public static final String PROGRAMM_VERSION = "9";
+	//public Context context;
+	//public String test = context.getFilesDir().getPath();
 	private static String DB_PATH = "/data/data/com.rosche.flightlog/databases/";
 	public static String DB_NAME = "flightlog20130527";
+	public static String DB_RESTORE = "flightlogRESTORE";
 	private SQLiteDatabase myDataBase;
 	public static String separation = ",";
 	private final Context myContext;
 	public int actualVersion = 0;
 	public ArrayList<String> upgrades = new ArrayList<String>();
+
 	public DatabaseHelper(Context context) {
 		super(context, DB_NAME, null, 1);
 		this.myContext = context;
+		//String test = this.myContext .getFilesDir().getPath();
 		upgrades.clear();
-		
-			upgrades.add("ALTER TABLE flightlog ADD COLUMN art text");
-			upgrades.add("ALTER TABLE flightlog ADD COLUMN hersteller text");
-		
+		upgrades.add("ALTER TABLE flightlog ADD COLUMN art text");
+		upgrades.add("ALTER TABLE flightlog ADD COLUMN hersteller text");
+		upgrades.add("CREATE TABLE documents (id INTEGER PRIMARY KEY, model_id NUMERIC, document BLOB, document_path TEXT)");
+		upgrades.add("ALTER TABLE flights ADD COLUMN flights text");
+		upgrades.add("CREATE TABLE field_description (id INTEGER PRIMARY KEY, type TEXT, options TEXT, default_value TEXT, default_label TEXT)");
+		upgrades.add("CREATE TABLE customfields (id INTEGER PRIMARY KEY, model_id NUMERIC, field_id NUMERIC, data TEXT, label TEXT, hint TEXT, visible TEXT)");
+		upgrades.add("INSERT INTO field_description (id,type,options,default_value,default_label) VALUES(1,'TEXT','','TEXT','TEXT')");
+		upgrades.add("INSERT INTO field_description (id,type,options,default_value,default_label) VALUES(2,'TEXT_AREA','15','TEXT_AREA','TEXT_AREA')");
+		upgrades.add("INSERT INTO field_description (id,type,options,default_value,default_label) VALUES(3,'CHECKBOX','1','CHECKBOX','CHECKBOX')");
+
 	}
 
 	public boolean upgradeDatabaseVersion(Context context) {
@@ -49,7 +62,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				db.execSQL(sqlQuery);
 				db.close();
 			} catch (SQLiteException e) {
-			
+
 				return false;
 			}
 		}
@@ -59,10 +72,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public void createDataBase() throws IOException {
 		boolean dbExist = checkDataBase();
 		if (dbExist) {
-			
+
 			// do nothing - database already exist
 		} else {
-		
+
 			this.getReadableDatabase();
 			try {
 				copyDataBase();
@@ -73,7 +86,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	public boolean checkDatabaseVersion() {
-		
+
 		String sqlDataStore = "create table if not exists "
 				+ TABLE_NAME_VERSION
 				+ " (id integer primary key autoincrement,"
@@ -83,7 +96,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL(sqlDataStore);
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 			return false;
 		}
 
@@ -111,19 +124,54 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					db.close();
 					return true;
 				} catch (SQLiteException e) {
-				
+
 					return false;
 				}
 			} else {
 				return false;
 			}
 		} catch (SQLiteException e) {
-			
+
 			return false;
 		}
 	}
 
-	public String[] ReadNRFromDB(String filter) {
+	public int getDatabaseVersion() {
+
+		String sqlDataStore = "create table if not exists "
+				+ TABLE_NAME_VERSION
+				+ " (id integer primary key autoincrement,"
+				+ " version text not null default '0')";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL(sqlDataStore);
+			db.close();
+		} catch (SQLiteException e) {
+
+			return 0;
+		}
+
+		String sqlQuery = "SELECT version from version WHERE 1 ORDER BY ID DESC LIMIT 1";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor c = db.rawQuery(sqlQuery, null);
+			String version = "0";
+			if (c.moveToFirst()) {
+				do {
+					version = c.getString(c.getColumnIndex("version"));
+				} while (c.moveToNext());
+			}
+			c.close();
+			db.close();
+			actualVersion = Integer.parseInt(version);
+			return actualVersion;
+				} catch (SQLiteException e) {
+
+			return 0;
+		}
+	}
+
+	public String[] ReadNRFromDB(String filter, boolean select_acticve_only) {
 		ArrayList<String> temp_array = new ArrayList<String>();
 		String[] number_array = new String[0];
 		String constraint = "";
@@ -131,6 +179,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			constraint = " WHERE name like '%" + filter + "%'";
 		} else {
 			constraint = " WHERE 1";
+		}
+		
+		if (select_acticve_only) {
+			constraint += " AND STATUS IN ('aktiv', 'aktice', 'aktuell')";
 		}
 		String sqlQuery = "SELECT id,name,typ FROM flightlog " + constraint
 				+ " ORDER BY name";
@@ -152,24 +204,111 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		number_array = temp_array.toArray(number_array);
 		return number_array;
 	}
-
-	public Integer updateFlight(String[] params, String id) {
-		String sqlQuery = "UPDATE flights SET ";
-		sqlQuery += "description='" + params[1] + "',";
-		sqlQuery += "date='" + params[2] + "'";
+	public Integer updateField(String[] params, String id) {
+		String sqlQuery = "UPDATE customfields SET ";
+		sqlQuery += "label='" + params[3] + "',";
+		sqlQuery += "hint='" + params[4] + "',";
+		sqlQuery += "visible='" + params[5] + "',";
+		sqlQuery += "field_id='" + params[1] + "'";
 		sqlQuery += " WHERE id ='" + id + "'";
 		try {
 			SQLiteDatabase db = this.getWritableDatabase();
 			db.execSQL(sqlQuery);
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 		return Integer.parseInt(id);
 	}
+	public Integer updateFlight(String[] params, String id) {
+		String sqlQuery = "UPDATE flights SET ";
+		sqlQuery += "description='" + params[1] + "',";
+		sqlQuery += "date='" + params[2] + "',";
+		sqlQuery += "flights='" + params[3] + "'";
+		sqlQuery += " WHERE id ='" + id + "'";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL(sqlQuery);
+			db.close();
+		} catch (SQLiteException e) {
 
+		}
+		return Integer.parseInt(id);
+	}
+	public int numberFlights(String id) {
+		int numberFlights = 0;
+		String sqlQuery = "SELECT count(*) as count FROM flights where model_id='" + id + "'";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor c = db.rawQuery(sqlQuery, null);
+			if (c.moveToFirst()) {
+				do {
+					numberFlights = c.getInt(c.getColumnIndex("count"));
+
+				} while (c.moveToNext());
+			}
+			c.close();
+			db.close();
+
+		} catch (SQLiteException e) {
+
+		}
+		return numberFlights;
+	}
+	
+	
+	public int countFlights(String id) {
+		int countFlights = 0;
+		String sqlQuery = "SELECT sum(flights) as count FROM flights where model_id='" + id + "'";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor c = db.rawQuery(sqlQuery, null);
+			if (c.moveToFirst()) {
+				do {
+					countFlights = c.getInt(c.getColumnIndex("count"));
+
+				} while (c.moveToNext());
+			}
+			c.close();
+			db.close();
+
+		} catch (SQLiteException e) {
+
+		}
+		return countFlights;
+	}
+	
+	public String[] ReadFieldFromDB(String id) {
+		String[] field_array = new String[6];
+		
+		String sqlQuery = "SELECT a.id, a.model_id, a.field_id, a.data, a.label, a.hint, a.visible, b.type FROM customfields a, field_description b where a.id = '"
+				+ id
+				+ "' AND a.field_id = b.id ORDER by a.label DESC";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor c = db.rawQuery(sqlQuery, null);
+			if (c.moveToFirst()) {
+				do {
+					field_array[0] = c.getString(c.getColumnIndex("id"));
+					field_array[1] = c.getString(c.getColumnIndex("model_id"));
+					field_array[2] = c.getString(c
+							.getColumnIndex("label"));
+					field_array[3] = c.getString(c.getColumnIndex("hint"));
+					field_array[4] = c.getString(c.getColumnIndex("visible"));
+					field_array[5] = c.getString(c.getColumnIndex("type"));
+				} while (c.moveToNext());
+			}
+			c.close();
+			db.close();
+
+		} catch (SQLiteException e) {
+
+		}
+		return field_array;
+	}
+	
 	public String[] ReadFlightFromDB(String id) {
-		String[] flight_array = new String[4];
+		String[] flight_array = new String[5];
 		String sqlQuery = "SELECT * FROM flights where id = '" + id + "'";
 		try {
 			SQLiteDatabase db = this.getWritableDatabase();
@@ -181,17 +320,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					flight_array[2] = c.getString(c
 							.getColumnIndex("description"));
 					flight_array[3] = c.getString(c.getColumnIndex("date"));
+					flight_array[4] = c.getString(c.getColumnIndex("flights"));
 				} while (c.moveToNext());
 			}
 			c.close();
 			db.close();
 
 		} catch (SQLiteException e) {
-			
+
 		}
 		return flight_array;
 	}
+	public void deleteFieldFromDB(Integer flightId) {
+		String sqlQuery = "DELETE FROM customfields WHERE id='"
+				+ String.valueOf(flightId) + "'";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL(sqlQuery);
+			db.close();
+		} catch (SQLiteException e) {
 
+		}
+
+	}
 	public void deleteFlightFromDB(Integer flightId) {
 		String sqlQuery = "DELETE FROM flights WHERE id='"
 				+ String.valueOf(flightId) + "'";
@@ -200,11 +351,73 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL(sqlQuery);
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 
 	}
+	public ArrayList<ArrayList<String>> getCustomFields() {
+		ArrayList<ArrayList<String>> number_array = new ArrayList<ArrayList<String>>();
+		String sqlQuery = "SELECT id,type,options,default_value,default_label FROM field_description ORDER by type DESC";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor c = db.rawQuery(sqlQuery, null);
+			number_array.clear();
+			if (c.moveToFirst()) {
+				do {
+					ArrayList<String> flight_array = new ArrayList<String>();
+					flight_array.add(c.getString(c.getColumnIndex("id")));
+					flight_array.add(c.getString(c.getColumnIndex("type")));
+					flight_array.add(c.getString(c
+							.getColumnIndex("options")));
+					flight_array.add(c.getString(c.getColumnIndex("default_value")));
+					flight_array.add(c.getString(c.getColumnIndex("default_label")));
+					number_array.add(flight_array);
+				} while (c.moveToNext());
+			}
+			c.close();
+			db.close();
+		} catch (SQLiteException e) {
 
+		}
+		return number_array;
+	}
+	public ArrayList<ArrayList<String>> ReadFieldsFromDB(String Selecteditem, boolean visible) {
+		String[] result_array;
+		ArrayList<ArrayList<String>> number_array = new ArrayList<ArrayList<String>>();
+		result_array = Selecteditem.split(":");
+		String constraint = "";
+		if (visible == true) {
+			constraint = " AND a.visible='1' ";
+		}
+		// String[]flight_array = new String[4];
+		String sqlQuery = "SELECT a.id, a.model_id, a.field_id, a.data, a.label, a.hint, a.visible, b.type FROM customfields a, field_description b where a.model_id = '"
+				+ result_array[0]
+				+ "' AND a.field_id = b.id "+constraint+" ORDER by a.label DESC";
+
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor c = db.rawQuery(sqlQuery, null);
+			number_array.clear();
+			if (c.moveToFirst()) {
+				do {
+					ArrayList<String> flight_array = new ArrayList<String>();
+					flight_array.add(c.getString(c.getColumnIndex("id")));
+					flight_array.add(c.getString(c.getColumnIndex("model_id")));
+					flight_array.add(c.getString(c
+							.getColumnIndex("data")));
+					flight_array.add(c.getString(c.getColumnIndex("label")));
+					flight_array.add(c.getString(c.getColumnIndex("hint")));
+					flight_array.add(c.getString(c.getColumnIndex("type")));
+					number_array.add(flight_array);
+				} while (c.moveToNext());
+			}
+			c.close();
+			db.close();
+		} catch (SQLiteException e) {
+
+		}
+		return number_array;
+	}
 	public ArrayList<ArrayList<String>> ReadFlightsFromDB(String Selecteditem) {
 		String[] result_array;
 		ArrayList<ArrayList<String>> number_array = new ArrayList<ArrayList<String>>();
@@ -231,7 +444,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			c.close();
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 		return number_array;
 	}
@@ -269,12 +482,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			c.close();
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 		return member_array;
 	}
+
 	public boolean checkDataBase() {
-		
+
 		SQLiteDatabase checkDB = null;
 
 		try {
@@ -294,21 +508,53 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		return checkDB != null ? true : false;
 	}
+
 	public boolean checkDataBase2() {
 		SQLiteDatabase checkDB = null;
 		try {
 			String myPath = DB_PATH + DB_NAME;
 			checkDB = SQLiteDatabase.openDatabase(myPath, null,
 					SQLiteDatabase.OPEN_READWRITE);
-			//checkDB.execSQL("SELECT * FROM flightlog WHERE id=1");
+			// checkDB.execSQL("SELECT * FROM flightlog WHERE id=1");
 
 		} catch (Exception e) {
-			
+
 			checkDB.close();
 			return false;
 		}
 		checkDB.close();
 		return true;
+	}
+	
+	
+	public void copyDataBaseEmergency() throws IOException {
+		InputStream myInput = myContext.getAssets().open(DB_RESTORE);
+		String outFileName = DB_PATH + DB_NAME;
+		Log.e("FL","outFileName:"+outFileName);
+		OutputStream myOutput = new FileOutputStream(outFileName);
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = myInput.read(buffer)) > 0) {
+			myOutput.write(buffer, 0, length);
+		}
+		myOutput.flush();
+		myOutput.close();
+		myInput.close();
+	}
+	public void copyDataBase(String path) throws IOException {
+		String outFileName = DB_PATH + DB_NAME;
+		File f_path = new File(path);
+		InputStream  myInput = null;
+		myInput = new BufferedInputStream(new FileInputStream(f_path));
+		OutputStream myOutput = new FileOutputStream(outFileName);
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = myInput.read(buffer)) > 0) {
+			myOutput.write(buffer, 0, length);
+		}
+		myOutput.flush();
+		myOutput.close();
+		myInput.close();
 	}
 
 	private void copyDataBase() throws IOException {
@@ -324,24 +570,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		myOutput.close();
 		myInput.close();
 	}
-	 public String readLine(BufferedReader br) throws IOException {
-		    StringBuilder sb = new StringBuilder();
-		    int i;
-		    while (0 <= (i = br.read())) {
-		      if (i == '\r') {
-		    	  br.read();
-		    	  break;  
-		      } else {
-		        sb.append((char)i);  
-		       }
-		      }
-		    if (sb.length() == 0) {
-		    	return null;
-		    } else {
-		    	return sb.toString();
-		    }
-		    
-		  }
+
+	public String readLine(BufferedReader br) throws IOException {
+		StringBuilder sb = new StringBuilder();
+		int i;
+		while (0 <= (i = br.read())) {
+			if (i == '\r') {
+				br.read();
+				break;
+			} else {
+				sb.append((char) i);
+			}
+		}
+		if (sb.length() == 0) {
+			return null;
+		} else {
+			return sb.toString();
+		}
+
+	}
+
 	public boolean importDataBaseComplete(Context context) throws IOException {
 		try {
 			File sdCard = Environment.getExternalStorageDirectory();
@@ -356,45 +604,57 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					+ ") values (";
 			String InsertString2 = ")";
 			int i = 0;
-			while((data = readLine(br) ) != null) {
+			while ((data = readLine(br)) != null) {
 				Integer nextval = getId("flightlog");
 				String[] sarray = data.split(separation);
 				String sqlQuery = "";
 				if (i > 0) {
-				
+
 					if (sarray.length == 13 || sarray.length == 14) {
 						StringBuilder sb = new StringBuilder(InsertString1);
-						String nameModel = sarray[1].replaceAll("\"", "").trim()
-								.toLowerCase(Locale.GERMANY);
+						String nameModel = sarray[1].replaceAll("\"", "")
+								.trim().toLowerCase(Locale.GERMANY);
 						if (!nameModel.equals("name")) {
 							sb.append("\"" + String.valueOf(nextval) + "\",");
-							sb.append("\"" + sarray[1].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[2].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[3].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[4].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[5].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[6].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[7].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[8].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[9].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[10].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[11].replaceAll("\"", "") + "\",");
-							sb.append("\"" + sarray[12].replaceAll("\"", "") + "\"");
+							sb.append("\"" + sarray[1].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[2].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[3].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[4].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[5].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[6].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[7].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[8].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[9].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[10].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[11].replaceAll("\"", "")
+									+ "\",");
+							sb.append("\"" + sarray[12].replaceAll("\"", "")
+									+ "\"");
 							sb.append(InsertString2);
 							sqlQuery = sb.toString();
 							try {
 								SQLiteDatabase db = this.getWritableDatabase();
-								
+
 								db.execSQL(sqlQuery);
 								db.close();
 							} catch (SQLiteException e) {
-								
+
 							}
 							Toast.makeText(
 									context,
 									"Modell " + sarray[1].replaceAll("\"", "")
-											+ " importiert.", Toast.LENGTH_SHORT)
-									.show();
+											+ " importiert.",
+									Toast.LENGTH_SHORT).show();
 						}
 					} else {
 						Toast.makeText(
@@ -524,7 +784,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				c.close();
 				db.close();
 			} catch (SQLiteException e) {
-				
+
 			}
 			printStream.flush();
 			printStream.close();
@@ -543,7 +803,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			File sdCard = Environment.getExternalStorageDirectory();
 			File dir = new File(sdCard.getAbsolutePath() + "/flight_log/export");
 			dir.mkdir();
-			
+
 			String outFilename = dateFormat.format(new Date()) + "_"
 					+ "model_data.csv";
 			File f = new File(dir, outFilename);
@@ -613,7 +873,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				c.close();
 				db.close();
 			} catch (SQLiteException e) {
-				
+
 			}
 			printStream.flush();
 			printStream.close();
@@ -634,16 +894,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		} else {
 			constraint = " ORDER BY f.id ASC";
 		}
-		String sqlQuery = "SELECT f.model_id,m.name,f.date,f.description FROM flights f join flightlog m on f.model_id=m.id "
+		String sqlQuery = "SELECT f.model_id,m.name,f.date,f.description,f.flights FROM flights f join flightlog m on f.model_id=m.id "
 				+ constraint;
 		String record = "";
 		String header = "";
-		header = "\"Fluege\"" + separation;
+		header = "\"Eintrag\"" + separation;
 		header += "\"\"" + separation;
 		header += "\"\"";
 		flights.add(header);
 		header = "\"Nr.\"" + separation;
 		header += "\"Datum\"" + separation;
+		header += "\"Flüge\"" + separation;
 		header += "\"Bericht\"";
 		flights.add(header);
 		try {
@@ -652,16 +913,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			if (c.moveToFirst()) {
 				do {
 					record = c.getString(c.getColumnIndex("date"));
-					record += separation + "\""
-							+ c.getString(c.getColumnIndex("description"))
-							+ "\"";
+					record += separation + "\""+ c.getString(c.getColumnIndex("flights"))+ "\"";
+					record += separation + "\""+ c.getString(c.getColumnIndex("description"))+ "\"";
 					flights.add(record);
 				} while (c.moveToNext());
 			}
 			c.close();
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 		return flights;
 	}
@@ -686,13 +946,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			} else {
 				constraint = "";
 			}
-			String sqlQuery = "SELECT f.model_id,m.name,f.date,f.description FROM flights f join flightlog m on f.model_id=m.id "
+			String sqlQuery = "SELECT f.model_id,m.name,f.date,f.description,f.flights FROM flights f join flightlog m on f.model_id=m.id "
 					+ constraint;
 			String record = "";
 			String header = "";
 			header = '"' + "MODELL_ID" + '"' + separation;
 			header += '"' + "NAME" + '"' + separation;
 			header += '"' + "DATUM" + '"' + separation;
+			header += '"' + "FLUEGE" + '"' + separation;
 			header += '"' + "EINTRAG" + '"' + "\r\n";
 			printStream.print(header);
 			try {
@@ -705,6 +966,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 								+ c.getString(c.getColumnIndex("name")) + '"';
 						record += separation
 								+ c.getString(c.getColumnIndex("date"));
+						record += separation + "\""+ c.getString(c.getColumnIndex("flights"))+ "\"";
 						record += separation + '"'
 								+ c.getString(c.getColumnIndex("description"))
 								+ '"';
@@ -715,7 +977,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				c.close();
 				db.close();
 			} catch (SQLiteException e) {
-				
+
 			}
 			printStream.flush();
 			printStream.close();
@@ -753,9 +1015,81 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			return false;
 		}
 	}
+	public Integer insertField(String[] params, boolean Global) {
+		Integer nextval = getId("customfields");
+		if (Global == true) {
+			ArrayList<String> IDS = new ArrayList<String>();
+			String sqlQuery = "SELECT id FROM flightlog where 1";
+								try {
+				SQLiteDatabase db = this.getWritableDatabase();
+				Cursor c = db.rawQuery(sqlQuery, null);
+				int i = 0;
+				if (c.moveToFirst()) {
+					do {
+						IDS.add(c.getString(c.getColumnIndex("id")));
+						i++;
+					} while (c.moveToNext());
+				}
+				c.close();
+				db.close();
+			} catch (SQLiteException e) {
+
+			}
+			int length = IDS.size();
+			for (int i = 0;i<length ; i++) {
+				params[0] = IDS.get(i);
+				nextval = getId("customfields");
+				sqlQuery = "INSERT INTO customfields (id,model_id,field_id,data,label,hint,visible) VALUES ('"
+						+ nextval + "'";
+				for (int n = 0; n < params.length; n++) {
+					if (params[n] != null) {
+		
+						sqlQuery += ",'" + params[n] + "'";
+					} else {
+						sqlQuery += ",''";
+					}
+				}
+				
+				sqlQuery += ")";
+			try {
+				SQLiteDatabase db = this.getWritableDatabase();
+				db.execSQL(sqlQuery);
+				db.close();
+			} catch (SQLiteException e) {
+			
+			}
+			}
+	
+		
+		} else {
+			String sqlQuery = "INSERT INTO customfields (id,model_id,field_id,data,label,hint,visible) VALUES ('"
+					+ nextval + "'";
+			for (int n = 0; n < params.length; n++) {
+				if (params[n] != null) {
+	
+					sqlQuery += ",'" + params[n] + "'";
+				} else {
+					sqlQuery += ",''";
+				}
+			}
+			
+			sqlQuery += ")";
+		
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL(sqlQuery);
+			db.close();
+		} catch (SQLiteException e) {
+		
+		}
+		
+		}
+		
+		return nextval;
+	}
 	public Integer insertFlight(String[] params) {
 		Integer nextval = getId("flights");
-		String sqlQuery = "INSERT INTO flights (id,model_id,description,date) VALUES ('"
+		String sqlQuery = "INSERT INTO flights (id,model_id,description,date,flights) VALUES ('"
 				+ nextval + "'";
 		for (int i = 0; i < params.length; i++) {
 			if (params[i] != null) {
@@ -771,7 +1105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL(sqlQuery);
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 		return nextval;
 	}
@@ -795,11 +1129,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL(sqlQuery);
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 		return nextval;
 	}
+	public Integer addDocument(Integer id, String image_path) {
+		Integer nextval = getId("documents");
+		String sqlQuery = "INSERT INTO documents (id,model_id,document_path) VALUES ('"
+				+ nextval
+				+ "'"
+				+ ",'"
+				+ String.valueOf(id)
+				+ "',"
+				+ "'"
+				+ image_path + "'" + ")";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL(sqlQuery);
+			db.close();
+			return nextval;
+		} catch (SQLiteException e) {
 
+			return null;
+		}
+	}
 	public Integer addImage(Integer id, String image_path) {
 		Integer nextval = getId("images");
 		String sqlQuery = "INSERT INTO images (id,model_id,image_path) VALUES ('"
@@ -816,7 +1169,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.close();
 			return nextval;
 		} catch (SQLiteException e) {
-			
+
 			return null;
 		}
 	}
@@ -840,11 +1193,30 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.close();
 			return nextval;
 		} catch (SQLiteException e) {
-			
+
 			return null;
 		}
 	}
+	public ArrayList<String> getDocuments(Integer model_id) {
+		String sqlQuery = "SELECT document_path FROM documents WHERE model_id ='"
+				+ model_id + "' ORDER BY id DESC";
+		ArrayList<String> documentPaths = new ArrayList<String>();
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			Cursor c = db.rawQuery(sqlQuery, null);
+			if (c.moveToFirst()) {
+				do {
+					documentPaths.add(c.getString(c.getColumnIndex("document_path")));
+				} while (c.moveToNext());
+			}
+			c.close();
+			db.close();
 
+		} catch (SQLiteException e) {
+
+		}
+		return documentPaths;
+	}
 	public ArrayList<String> getImages(Integer model_id) {
 		String sqlQuery = "SELECT image_path FROM images WHERE model_id ='"
 				+ model_id + "' ORDER BY id DESC";
@@ -861,7 +1233,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.close();
 
 		} catch (SQLiteException e) {
-			
+
 		}
 		return imagePaths;
 	}
@@ -875,16 +1247,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			Cursor c = db.rawQuery(sqlQuery, null);
 			if (c.moveToFirst()) {
 				do {
-
 					image_path = c.getString(c.getColumnIndex("image_path"));
-
+					File sdCard = Environment.getExternalStorageDirectory();
+					String f = sdCard.getAbsolutePath() + "/" + image_path;
+					File file = new File(f);
+					if (file.exists()) {
+						return image_path;
+					}
 				} while (c.moveToNext());
 			}
 			c.close();
 			db.close();
 
 		} catch (SQLiteException e) {
-			
+
 		}
 		return image_path;
 	}
@@ -901,10 +1277,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL(sqlQueryDelete);
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 	}
+	public void deleteDocument(String imagePath, String model_id) {
+		String sqlQueryDelete = "DELETE FROM documents WHERE document_path='"
+				+ imagePath + "' and model_id='"+model_id+"'";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL(sqlQueryDelete);
+			db.close();
+		} catch (SQLiteException e) {
 
+		}
+	}
 	public void resetImageDB() {
 		String sqlQueryDelete = "DELETE FROM images WHERE 1";
 		try {
@@ -912,7 +1298,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL(sqlQueryDelete);
 			db.close();
 		} catch (SQLiteException e) {
-			
+
+		}
+	}
+
+	public void resetDB() {
+		String sqlQuery = "ALTER TABLE customfields ADD COLUMN visible text";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL(sqlQuery);
+			db.close();
+		} catch (SQLiteException e) {
+
 		}
 	}
 
@@ -966,7 +1363,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL(sqlQuery);
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 		return id;
 	}
@@ -991,11 +1388,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			db.execSQL(sqlQuery);
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 		return Integer.parseInt(id);
 	}
+	public Integer updateFieldData(String id, String data) {
+		data = data.replace("'", "\'");
+		data = data.replace(""+'"', "\"");
+		String sqlQuery = "UPDATE customfields SET ";
+		sqlQuery += "data='" + data + "'";
+			sqlQuery += " WHERE id ='" + id + "'";
+		try {
+			SQLiteDatabase db = this.getWritableDatabase();
+			db.execSQL(sqlQuery);
+			db.close();
+		} catch (SQLiteException e) {
 
+		}
+		return Integer.parseInt(id);
+	}
+	
 	private int getId(String table) {
 		String sqlQuery = "SELECT max(CAST(id AS INTEGER)) as nextval, count(*) as counts FROM "
 				+ table;
@@ -1020,7 +1432,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			c.close();
 			db.close();
 		} catch (SQLiteException e) {
-			
+
 		}
 		return id + 1;
 	}
@@ -1035,6 +1447,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 	}
+
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 	}

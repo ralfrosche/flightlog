@@ -28,7 +28,7 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem> {
 		this.context = context;
 		this.data = data;
 		this.imageWidth = imagewidth;
-	
+
 	}
 
 	@Override
@@ -40,10 +40,11 @@ public class GridViewAdapter extends ArrayAdapter<ImageItem> {
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			row = inflater.inflate(layoutResourceId, parent, false);
 			holder = new ViewHolder();
-			ImageView iV= (ImageView) row.findViewById(R.id.image);
+			ImageView iV = (ImageView) row.findViewById(R.id.image);
 			int height = iV.getLayoutParams().height;
 			iV.setScaleType(ImageView.ScaleType.FIT_CENTER);
-			LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(imageWidth,height);
+			LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(
+					imageWidth, height);
 			iV.setLayoutParams(parms);
 			holder.image = iV;
 			row.setTag(holder);

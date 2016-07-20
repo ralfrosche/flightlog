@@ -11,17 +11,17 @@
     <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <uses-sdk
-        android:minSdkVersion="13"
+        android:minSdkVersion="14"
         android:targetSdkVersion="18" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/flight_icon"
         android:label="@string/app_name"
-        android:launchMode="singleTop" >
+        android:launchMode="singleTop" android:theme="@style/AppTheme">
         <activity
             android:name="com.rosche.flightlog.MainActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden"
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:label="@string/app_name"
             android:launchMode="singleTop" >
             <intent-filter>
@@ -44,33 +44,44 @@
         
         <activity
             android:name="com.rosche.flightlog.ImageGallery"
-            android:theme="@android:style/Theme.Holo.NoActionBar" >
+
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize">
 
  		</activity>
- 		    <activity android:name="CustomGalleryActivity" >
+	                <activity android:name="CustomGalleryActivity" 
+	                    android:configChanges="orientation|keyboard|keyboardHidden|screenSize">
             <intent-filter>
+                <action android:name="luminous.ACTION_PICK" />
                 <action android:name="luminous.ACTION_MULTIPLE_PICK" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity android:name="com.rosche.flightlog.Flights" />
-        <activity android:name="com.rosche.flightlog.NewFlight" />
+        <activity android:name="com.rosche.flightlog.Flights" 
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"/>
+        <activity android:name="com.rosche.flightlog.NewFlight" 
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"/>
+        <activity android:name="com.rosche.flightlog.documents" 
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"/>
         <activity
             android:name="com.rosche.flightlog.FullScreenViewActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:theme="@android:style/Theme.Holo.NoActionBar" >
         </activity>
-          
         <activity
             android:name="com.rosche.flightlog.PreferencesActivity"
             android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
             android:enabled="true"
-            android:label="Settings" >
+            android:label="Options" >
             <intent-filter>
                 <category android:name="android.intent.category.PREFERENCE" />
             </intent-filter>
         </activity>
+         <activity android:name="com.rosche.flightlog.customFields" 
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"/>
+                 <activity android:name="com.rosche.flightlog.newField" 
+            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"/>
+        <activity android:name="eu.janmuller.android.simplecropimage.CropImage" />
     </application>
 
 </manifest>

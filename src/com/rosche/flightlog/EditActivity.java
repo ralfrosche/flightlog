@@ -7,19 +7,28 @@ import java.util.Calendar;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 public class EditActivity extends Activity {
@@ -45,14 +54,29 @@ public class EditActivity extends Activity {
 	Cursor cursor;
 	String selectedImagePath;
 	String filemanagerstring;
+	public String labelBeschreibung = "Beschr.:";
+	public String labelTyp = "Typ:";
+	public String labelArt = "Art:";
+	public String labelDatum = "Datum:";
+	public String labelStatus = "Status:";
+	public String labelHersteller = "Herst.:";
+	public String labelSpannweite = "Spannw.:";
+	public String labelLaenge = "Länge:";
+	public String labelGewicht = "Gewicht:";
+	public String labelRCdata = "RC Daten:";
+	public String labelAusstattung = "Ausst.:";
+	String query = "";
+
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit);
-		String query = getIntent().getStringExtra("query");
-
+		  getActionBar().setDisplayShowHomeEnabled(false);
+		 query = getIntent().getStringExtra("query");
+		 getWindow().setSoftInputMode(
+				    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		if (!query.equals("")) {
 			String[] result_array;
 			result_array = query.split(":");
@@ -70,6 +94,36 @@ public class EditActivity extends Activity {
 				EditText sgewicht = (EditText) findViewById(R.id.gewichtedit);
 				EditText src_data = (EditText) findViewById(R.id.rc_dataedit);
 				EditText sausstattung = (EditText) findViewById(R.id.aussttungedit);
+				
+				
+				final TextView textViewlabelBeschreibung=                       (TextView) findViewById(R.id.editLabelBeschreibung);
+				final TextView textViewlabelTyp=                                (TextView) findViewById(R.id.edittypLabel);
+				final TextView textViewlabelArt=                                (TextView) findViewById(R.id.editlabelfmain);
+				final TextView textViewlabelDatum=                              (TextView) findViewById(R.id.editlabelDatum);
+				final TextView textViewlabelStatus=                             (TextView) findViewById(R.id.editlabelStatus);
+				final TextView textViewlabelHersteller=                         (TextView) findViewById(R.id.editlabelHersteller);
+				final TextView textViewlabelSpannweite=		                (TextView) findViewById(R.id.editlabelSpannweite);
+				final TextView textViewlabelLaenge=                             (TextView) findViewById(R.id.editlabellaenge);
+				final TextView textViewlabelGewicht=                            (TextView) findViewById(R.id.editlabelGewicht);
+				final TextView textViewlabelRCdata=                             (TextView) findViewById(R.id.editlabelRCdata);
+				final TextView textViewlabelAusstattung=                        (TextView) findViewById(R.id.editlabelAusstattung);
+				
+				
+				textViewlabelBeschreibung.setText(labelBeschreibung);                
+				textViewlabelTyp.setText(labelTyp);                         
+				textViewlabelArt.setText(labelArt);                         
+				textViewlabelDatum.setText(labelDatum);                       
+				textViewlabelStatus.setText(labelStatus);                      
+				textViewlabelHersteller.setText(labelHersteller);                  
+				textViewlabelSpannweite.setText(labelSpannweite);		  
+				textViewlabelLaenge.setText(labelLaenge);                      
+				textViewlabelGewicht.setText(labelGewicht);                     
+				textViewlabelRCdata.setText(labelRCdata);                      
+				textViewlabelAusstattung.setText(labelAusstattung);                 
+				
+				
+				
+				
 
 				Spinner styp = (Spinner) findViewById(R.id.typspinner);
 				Spinner sart = (Spinner) findViewById(R.id.artspinner);
@@ -145,8 +199,69 @@ public class EditActivity extends Activity {
 				src_data.setText(DataToDB[7]);
 				sausstattung.setText(DataToDB[8]);
 				image_path = myDbHelper.getImage(Integer.parseInt(editID));
-				myDbHelper.close();
+				
+				
+				// handle custom fields
+				ArrayList<ArrayList<String>> fieldArray;
+				fieldArray = myDbHelper.ReadFieldsFromDB(query.trim(), false);
+				int length = fieldArray.size();
+				// Log.e("FL","length"+length);
+				TableLayout table = (TableLayout) findViewById(R.id.tableLayoutEdit);
+				for (int i = 0; i < length; i++) {
+					ArrayList<String>  fieldrow = new ArrayList<String>();
+					fieldrow = fieldArray.get(i);
+					String label = fieldrow.get(3)+ ":";
+					String hint = fieldrow.get(4);
+					String type = fieldrow.get(5);
+					String data = fieldrow.get(2);
+					
+					LayoutInflater inflaterRow = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+					TableRow rowViewNew = null;
+					TextView customLabel = null;
+					EditText customField = null;
+					CheckBox CustomCheckBox = null;
+							
+					if (type.equals("TEXT")) {
+						rowViewNew = (TableRow)inflaterRow.inflate(R.layout.text_row_edit, null);
+						 customLabel = (TextView) rowViewNew.getChildAt(0);
+						 customField = (EditText) rowViewNew.getChildAt(1);
+						 customField.setHint(hint);
+						customField.setText(data);
+					} else if(type.equals("TEXT_AREA")) {
+						rowViewNew = (TableRow)inflaterRow.inflate(R.layout.text_area_row_edit, null);
+						 customLabel = (TextView) rowViewNew.getChildAt(0);
+						 customField = (EditText) rowViewNew.getChildAt(1);
+						 customField.setHint(hint);
+						 customField.setText(data);
+					}  else if(type.equals("CHECKBOX")) {
+						rowViewNew = (TableRow)inflaterRow.inflate(R.layout.checkbox_row, null);
+						 customLabel = (TextView) rowViewNew.getChildAt(0);
+						 CustomCheckBox = (CheckBox) rowViewNew.getChildAt(1);
+						 CustomCheckBox.setHint(hint);
+						 if (data.equals("1")) {
+							 CustomCheckBox.setChecked(true);
+						 } else {
+							 CustomCheckBox.setChecked(false);
+						 }
 						
+					} else {
+						rowViewNew = (TableRow)inflaterRow.inflate(R.layout.text_row_edit, null);
+						 customLabel = (TextView) rowViewNew.getChildAt(0);
+						 customField = (EditText) rowViewNew.getChildAt(1);
+						 customField.setHint(hint);
+						customField.setText(data);
+					}
+					
+					customLabel.setText(label);
+					rowViewNew.setTag(fieldrow.get(0));
+					View v = new View(this);
+					v.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.FILL_PARENT, 1));
+					v.setBackgroundColor(Color.rgb(255, 0, 0));
+					table.addView(rowViewNew);
+					table.addView(v);
+				}
+				myDbHelper.close();
+
 			} catch (IOException ioe) {
 
 				throw new Error("Unable to open database");
@@ -154,6 +269,33 @@ public class EditActivity extends Activity {
 			}
 
 		} else {
+			
+			
+			final TextView textViewlabelBeschreibung=                       (TextView) findViewById(R.id.editLabelBeschreibung);
+			final TextView textViewlabelTyp=                                (TextView) findViewById(R.id.edittypLabel);
+			final TextView textViewlabelArt=                                (TextView) findViewById(R.id.editlabelfmain);
+			final TextView textViewlabelDatum=                              (TextView) findViewById(R.id.editlabelDatum);
+			final TextView textViewlabelStatus=                             (TextView) findViewById(R.id.editlabelStatus);
+			final TextView textViewlabelHersteller=                         (TextView) findViewById(R.id.editlabelHersteller);
+			final TextView textViewlabelSpannweite=		                (TextView) findViewById(R.id.editlabelSpannweite);
+			final TextView textViewlabelLaenge=                             (TextView) findViewById(R.id.editlabellaenge);
+			final TextView textViewlabelGewicht=                            (TextView) findViewById(R.id.editlabelGewicht);
+			final TextView textViewlabelRCdata=                             (TextView) findViewById(R.id.editlabelRCdata);
+			final TextView textViewlabelAusstattung=                        (TextView) findViewById(R.id.editlabelAusstattung);
+			
+			
+			textViewlabelBeschreibung.setText(labelBeschreibung);                
+			textViewlabelTyp.setText(labelTyp);                         
+			textViewlabelArt.setText(labelArt);                         
+			textViewlabelDatum.setText(labelDatum);                       
+			textViewlabelStatus.setText(labelStatus);                      
+			textViewlabelHersteller.setText(labelHersteller);                  
+			textViewlabelSpannweite.setText(labelSpannweite);		  
+			textViewlabelLaenge.setText(labelLaenge);                      
+			textViewlabelGewicht.setText(labelGewicht);                     
+			textViewlabelRCdata.setText(labelRCdata);                      
+			textViewlabelAusstattung.setText(labelAusstattung);                 
+			
 			editMode = false;
 			Spinner styp = (Spinner) findViewById(R.id.typspinner);
 			Spinner sart = (Spinner) findViewById(R.id.artspinner);
@@ -235,6 +377,7 @@ public class EditActivity extends Activity {
 							idImage = myDbHelper.updateImage(id, image_path);
 							Log.e("MListe", "- updated model ID:" + id
 									+ " Image:" + idImage);
+							updateCustomFields();
 						} else {
 							id = myDbHelper.insert(params);
 							myDbHelper.insertImage(id, image_path);
@@ -251,7 +394,7 @@ public class EditActivity extends Activity {
 
 					}
 				} else {
-					
+
 					Log.e("MListe", "- empty name:");
 				}
 			}
@@ -276,12 +419,50 @@ public class EditActivity extends Activity {
 		mMonth = c.get(Calendar.MONTH);
 		mDay = c.get(Calendar.DAY_OF_MONTH);
 
-
 		if (editMode != true)
 			updateDisplay();
 	}
-
-
+	private void updateCustomFields(){
+		ArrayList<ArrayList<String>> fieldArray;
+		fieldArray = myDbHelper.ReadFieldsFromDB(query.trim(), false);
+		TableLayout table = (TableLayout) findViewById(R.id.tableLayoutEdit);
+		
+		final int childCount = table.getChildCount();
+		for (int i = 0; i < childCount; i++) {
+	        final View child = table.getChildAt(i);
+	        if (child instanceof TableRow) {
+	        	TableRow rowViewNew = (TableRow) table.getChildAt(i);
+	        	String tag = (String) child.getTag();
+	        	if (tag != null && (Integer.parseInt(tag) != 0)) {
+	        		Log.e("FL","tag:"+tag);
+	        		EditText customField = null;
+	        		CheckBox customCheckBox = null;
+	        		String data = "";
+	        		final View chieldField = rowViewNew.getChildAt(1);
+	        		  if (chieldField instanceof EditText) {
+	        			 customField = (EditText) rowViewNew.getChildAt(1);
+	  					 data = customField.getText().toString().trim();
+	        			  
+	        		  }
+	        		  if (chieldField instanceof CheckBox) {
+	        			  customCheckBox = (CheckBox) rowViewNew.getChildAt(1);
+		        			  if (customCheckBox.isChecked()) {
+		        				  data = "1";
+		        			  } else {
+		        				  data = "0";
+		        			  }
+     			  
+		        		  }
+					
+					Log.e("FL","data:"+data);
+	        		myDbHelper.updateFieldData(tag, data);
+	        		
+	        	}
+	        		            
+	        } 
+	      }
+		}
+	
 	private void updateDisplay() {
 		mDateDisplay = (TextView) findViewById(R.id.dateedit);
 		mDateDisplay.setText(getString(R.string.strSelectedDate,
@@ -303,7 +484,21 @@ public class EditActivity extends Activity {
 		if (!valueTmp.equals("")) {
 			art_array = valueTmp;
 		}
-	}
+		
+		labelBeschreibung = mPrefs.getString("labelBeschreibung",
+				labelBeschreibung);
+		labelTyp = mPrefs.getString("labelTyp", labelTyp);
+		labelArt = mPrefs.getString("labelArt", labelArt);
+		labelDatum = mPrefs.getString("labelDatum", labelDatum);
+		labelStatus = mPrefs.getString("labelStatus", labelStatus);
+		labelHersteller = mPrefs.getString("labelHersteller", labelHersteller);
+		labelSpannweite = mPrefs.getString("labelSpannweite", labelSpannweite);
+		labelLaenge = mPrefs.getString("labelLaenge", labelLaenge);
+		labelGewicht = mPrefs.getString("labelGewicht", labelGewicht);
+		labelRCdata = mPrefs.getString("labelRCdata", labelRCdata);
+		labelAusstattung = mPrefs.getString("labelAusstattung",
+				labelAusstattung);
+		}
 
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
 

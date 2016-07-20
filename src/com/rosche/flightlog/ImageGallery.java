@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import eu.janmuller.android.simplecropimage.CropImage;
+
+
 
 
 import android.app.Activity;
@@ -15,7 +18,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,7 +28,9 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
+
 
 import android.util.Log;
 import android.util.TypedValue;
@@ -35,6 +42,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
+
 import android.widget.GridView;
 
 import android.widget.AdapterView.OnItemClickListener;
@@ -48,13 +56,20 @@ public class ImageGallery extends Activity {
 	private static String newImagePath = "";
 	private ArrayList<ImageItem> imageItems = new ArrayList<ImageItem>();
 	protected static final int CAPTURE_IMAGE_THUMBNAIL_ACTIVITY_REQUEST_CODE = 1888;
+	protected static final int SOME_RANDOM_REQUEST_CODE = 1002;
 	protected static final int REQUEST_PICK_IMAGE = 999;
+	protected static final int REQUEST_CODE_CROP_IMAGE = 2000;
 	protected static final int CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE = 1777;
 	private GridViewAdapter customGridAdapter;
 	private DatabaseHelper myDbHelper = new DatabaseHelper(this);
 	private Activity _activity = this;
 	private int columnWidth;
+	public static SharedPreferences mPrefs;
 	private float padding;
+	public String picture_path = "Pictures";
+	public boolean crop = false;
+	public boolean sizeDown = false;
+	public boolean use_internal_cropping = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +80,16 @@ public class ImageGallery extends Activity {
 		editID = result_array[0].trim();
 		setContentView(R.layout.activity_image_view);
 		setGrid();
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		readPrefs();
+	}
+
+	public void readPrefs() {
+		picture_path = mPrefs.getString("picture_path", picture_path);
+		crop = mPrefs.getBoolean("crop", crop);
+		sizeDown = mPrefs.getBoolean("sizeDown", sizeDown);
+		use_internal_cropping = mPrefs.getBoolean("use_internal_cropping", use_internal_cropping);
+		
 	}
 
 	private void InitilizeGridLayout() {
@@ -97,9 +122,9 @@ public class ImageGallery extends Activity {
 						.get(i)));
 			}
 		}
-		bMap = BitmapFactory
-				.decodeResource(getResources(), R.drawable.exposureicon);
-		//imageItems.add(new ImageItem(bMap, "New", "nothing"));
+		bMap = BitmapFactory.decodeResource(getResources(),
+				R.drawable.exposureicon);
+		// imageItems.add(new ImageItem(bMap, "New", "nothing"));
 		InsertId = imageItems.size() - 199;
 		imagePaths = null;
 		InitilizeGridLayout();
@@ -171,38 +196,213 @@ public class ImageGallery extends Activity {
 		File file = new File(Environment.getExternalStorageDirectory()
 				+ File.separator + newImagePath + ".jpg");
 		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-		intent.putExtra("crop", "true");
-		//intent.putExtra("return-data", true);
+		//intent.putExtra("crop", "true");
 		startActivityForResult(intent,
 				CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE);
 
 	}
-	private void pickMultipleImage(){
+
+	private void pickMultipleImage() {
 		Intent i = new Intent(Action.ACTION_MULTIPLE_PICK);
+		i.putExtra("picture_path", picture_path);
 		startActivityForResult(i, 200);
-	}
-	
-	private void pickImage() {
-        Intent pickImageIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyyHHmmss",
-				Locale.GERMANY);
-		newImagePath = "flight_log/" + dateFormat.format(new Date());
-		File file = new File(Environment.getExternalStorageDirectory()
-				+ File.separator + newImagePath + ".jpg");
-		// Log.e("newImagePath", "newImagePath"+newImagePath);
-		pickImageIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
-		pickImageIntent.setType("image/*");
-		pickImageIntent.putExtra("crop", "true");
-		pickImageIntent.putExtra("outputFormat",
-				
-                Bitmap.CompressFormat.JPEG.toString());
-		//pickImageIntent.putExtra("return-data", true);
-        startActivityForResult(pickImageIntent, REQUEST_PICK_IMAGE);
+
 	}
 
+	public String getPath(Uri uri) {
+		String selectedImagePath;
+		String[] projection = { MediaStore.Images.Media.DATA };
+		Cursor cursor = getContentResolver().query(uri, projection, null, null,
+				null);
+		if (cursor != null) {
+			int column_index = cursor
+					.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+			cursor.moveToFirst();
+			selectedImagePath = cursor.getString(column_index);
+		} else {
+			selectedImagePath = null;
+		}
+
+		if (selectedImagePath == null) {
+			selectedImagePath = uri.getPath();
+		}
+		return selectedImagePath;
+	}
+
+	private void pickImage() {
+		/*
+		Intent intent = new Intent();
+		intent.setAction(Intent.ACTION_GET_CONTENT);
+		File file = new File(Environment.getExternalStorageDirectory(),
+				picture_path);
+		intent.setDataAndType(Uri.fromFile(file), "image/*");
+		// intent.setType("image/*");
+		String cropString = "false";
+		if (crop == true) {
+			cropString = "true";
+		} else {
+			cropString = "false";
+		}
+		intent.putExtra("crop", cropString);
+		intent.putExtra("return-data", true);
+		startActivityForResult(
+				Intent.createChooser(intent, "Complete action using"),
+				REQUEST_PICK_IMAGE);
+		
+		*/
+
+		 File root = new File(Environment.getExternalStorageDirectory().getPath()
+				 + picture_path);
+				         Uri uri = Uri.fromFile(root);
+				         Intent intent = new Intent();
+				         intent.setAction(Intent.ACTION_GET_CONTENT);
+				         intent.setData(uri);
+				         intent.setType("image/*");
+						if (crop == true) {
+							intent.putExtra("crop", "true");
+							
+						}
+						intent.setType("image/*");
+						intent.putExtra("return-data", true);
+				     	startActivityForResult(
+								Intent.createChooser(intent, "Complete action using"),
+								REQUEST_PICK_IMAGE);
+		
+		
+	}
+	  private void runCropImage(File filepath) {
+
+	      if (use_internal_cropping) {  
+	    	  Intent intent = new Intent(this, CropImage.class);
+	        intent.putExtra(CropImage.IMAGE_PATH, filepath.getPath());
+	        intent.putExtra(CropImage.SCALE, true);
+
+	        intent.putExtra(CropImage.ASPECT_X, 3);
+	        intent.putExtra(CropImage.ASPECT_Y, 2);
+
+	        startActivityForResult(intent, REQUEST_CODE_CROP_IMAGE);
+	      }
+	    }
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		 super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE || requestCode == REQUEST_PICK_IMAGE) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == SOME_RANDOM_REQUEST_CODE) {
+
+		}
+
+		else if (requestCode == REQUEST_PICK_IMAGE) {
+			Log.e("Flightlog", "resultCode"+resultCode);
+			if (resultCode == -1) {
+				Bundle extras = data.getExtras();
+				Uri imageUri = data.getData();
+				
+				
+				
+				if (imageUri != null) {
+					Log.e("Flightlog", "filepath"+getPath(imageUri));
+					
+					String iFile = Environment.getExternalStorageDirectory()
+							+ File.separator + newImagePath + ".jpg";
+					Log.e("Flightlog", "filepath:"+getPath(imageUri));
+					
+					SimpleDateFormat dateFormat = new SimpleDateFormat(
+							"ddMMyyyyHHmmss", Locale.GERMANY);
+					newImagePath = "flight_log/"
+							+ dateFormat.format(new Date());
+					File fileThumb = new File(
+							Environment.getExternalStorageDirectory()
+									+ File.separator + newImagePath + "_thumb"
+									+ ".jpg");
+					File fileFull = new File(
+							Environment.getExternalStorageDirectory()
+									+ File.separator + newImagePath + ".jpg");
+					int imgageSize = (int) ((getScreenWidth(this) - ((3 + 1) * padding)) / 3);
+					Bitmap bitmap = decodeSampledBitmapFromFile(
+							getPath(imageUri), imgageSize, imgageSize);
+					FileOutputStream out;
+					try {
+						out = new FileOutputStream(fileThumb);
+						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+						out.flush();
+						out.close();
+					} catch (Exception e) {
+					}
+					BitmapFactory.Options options = new BitmapFactory.Options();
+					if (sizeDown) {
+						options.inSampleSize = 3;
+					}
+					bitmap = BitmapFactory.decodeFile(getPath(imageUri),
+							options);
+					try {
+						out = new FileOutputStream(fileFull);
+						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+						out.flush();
+						out.close();
+					} catch (Exception e) {
+					}
+					
+					runCropImage(fileFull);
+					fileFull = null;
+					fileThumb = null;
+					
+					
+					myDbHelper.addImage(Integer.parseInt(editID), newImagePath
+							+ ".jpg");
+
+				} else if (extras != null) {
+					SimpleDateFormat dateFormat = new SimpleDateFormat(
+							"ddMMyyyyHHmmss", Locale.GERMANY);
+					newImagePath = "flight_log/"
+							+ dateFormat.format(new Date());
+					File fileThumb = new File(
+							Environment.getExternalStorageDirectory()
+									+ File.separator + newImagePath + "_thumb"
+									+ ".jpg");
+					File fileFull = new File(
+							Environment.getExternalStorageDirectory()
+									+ File.separator + newImagePath + ".jpg");
+
+					int imgageSize = (int) ((getScreenWidth(this) - ((3 + 1) * padding)) / 3);
+
+					Bitmap bitmap = extras.getParcelable("data");
+					FileOutputStream out;
+					try {
+						out = new FileOutputStream(fileFull);
+						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+						out.flush();
+						out.close();
+					} catch (Exception e) {
+					}
+					String iFile = Environment.getExternalStorageDirectory()
+							+ File.separator + newImagePath + ".jpg";
+					Log.e("Flightlog", "filepath:"+iFile);
+					
+					bitmap = decodeSampledBitmapFromFile(
+							getPath(Uri.fromFile(fileFull)), imgageSize,
+							imgageSize);
+
+					try {
+						out = new FileOutputStream(fileThumb);
+						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+						out.flush();
+						out.close();
+					} catch (Exception e) {
+					}
+					
+					myDbHelper.addImage(Integer.parseInt(editID), newImagePath
+							+ ".jpg");
+					runCropImage(fileThumb);
+
+				}
+
+			}
+			gridView.removeAllViewsInLayout();
+			setGrid();
+		} else if (requestCode == REQUEST_CODE_CROP_IMAGE) {
+		     String path = data.getStringExtra(CropImage.IMAGE_PATH);
+		     Log.e("Flightlog","pathCroped:"+path);
+          
+		} else if (requestCode == CAPTURE_IMAGE_FULLSIZE_ACTIVITY_REQUEST_CODE) {
+			Log.e("resultCode",""+resultCode);
 			if (resultCode == -1) {
 				String imagePath = Environment.getExternalStorageDirectory()
 						+ File.separator + newImagePath + ".jpg";
@@ -225,14 +425,14 @@ public class ImageGallery extends Activity {
 					out.close();
 				} catch (Exception e) {
 				}
-				
+
 				BitmapFactory.Options options = new BitmapFactory.Options();
-		        //options.inSampleSize = 3;
+				if (sizeDown) {
+					options.inSampleSize = 3;
+				}
 
 
-		        bitmap = BitmapFactory.decodeFile(imagePath,options);
-
-				//bitmap = decodeSampledBitmapFromFile(imagePath, 800, 600);
+				bitmap = BitmapFactory.decodeFile(imagePath, options);
 
 				try {
 					out = new FileOutputStream(fileFull);
@@ -244,80 +444,93 @@ public class ImageGallery extends Activity {
 
 				myDbHelper.addImage(Integer.parseInt(editID), newImagePath
 						+ ".jpg");
+				runCropImage(fileFull);
 				gridView.removeAllViewsInLayout();
 				setGrid();
-			} 
+			}
+
+		} else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
+
+			String[] all_path = data.getStringArrayExtra("all_path");
+			int i = 0;
+			for (String imageUri : all_path) {
+				boolean convertThumb = false;
+				boolean convertFull = false;
+				i++;
+				SimpleDateFormat dateFormat = new SimpleDateFormat(
+						"ddMMyyyyHHmmss", Locale.GERMANY);
+				newImagePath = "flight_log/" + dateFormat.format(new Date())
+						+ '_' + i;
 				
-			} else if (requestCode == 200  && resultCode == Activity.RESULT_OK) {
+				File sdCard = Environment.getExternalStorageDirectory();
+				File dir = new File(sdCard.getAbsolutePath() + "/flight_log");
+				dir.mkdir();
+			
 				
-				
-				String[] all_path = data.getStringArrayExtra("all_path");
-				int i = 0;
-				for (String imageUri : all_path) {
-					//CustomGallery item = new CustomGallery();
-					//item.sdcardPath = string;
-					i++;
-					Log.e("Gallery", "imagedataT: "+imageUri);
-					  SimpleDateFormat dateFormat = new SimpleDateFormat("ddMMyyyyHHmmss",
-								Locale.GERMANY);
-						newImagePath = "flight_log/" + dateFormat.format(new Date())+'_'+i;
-						Log.e("Gallary", "fielname: "+newImagePath);
-					File fileThumb = new File(
-							Environment.getExternalStorageDirectory()
-									+ File.separator + newImagePath + "_thumb"
-									+ ".jpg");
-					File fileFull = new File(
-							Environment.getExternalStorageDirectory()
-									+ File.separator + newImagePath + ".jpg");
+				File fileThumb = new File(
+						Environment.getExternalStorageDirectory()
+								+ File.separator + newImagePath + "_thumb"
+								+ ".jpg");
+				File fileFull = new File(
+						Environment.getExternalStorageDirectory()
+								+ File.separator + newImagePath + ".jpg");
 
-					int imgageSize = (int) ((getScreenWidth(this) - ((3 + 1) * padding)) / 3);
-					Bitmap bitmap = decodeSampledBitmapFromFile(imageUri,
-							imgageSize, imgageSize);
-					FileOutputStream out;
-					try {
-						out = new FileOutputStream(fileThumb);
-						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-						out.flush();
-						out.close();
-					} catch (Exception e) {
-					}
-					
-					BitmapFactory.Options options = new BitmapFactory.Options();
-			        //options.inSampleSize = 3;
-
-
-			        bitmap = BitmapFactory.decodeFile(imageUri,options);
-
-					//bitmap = decodeSampledBitmapFromFile(imagePath, 800, 600);
-
-					try {
-						out = new FileOutputStream(fileFull);
-						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-						out.flush();
-						out.close();
-					} catch (Exception e) {
-					}
-					fileFull = null;
-					fileThumb = null;
-					myDbHelper.addImage(Integer.parseInt(editID), newImagePath
-							+ ".jpg");
+				int imgageSize = (int) ((getScreenWidth(this) - ((3 + 1) * padding)) / 3);
+				Bitmap bitmap = decodeSampledBitmapFromFile(imageUri,
+						imgageSize, imgageSize);
+				FileOutputStream out;
+				try {
+					out = new FileOutputStream(fileThumb);
+					bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+					out.flush();
+					out.close();
+					convertThumb = true;
+					convertFull = true;
+				} catch (Exception e) {
+					convertThumb = false;
+					convertFull = false;
 
 				}
-				
-			
-				gridView.removeAllViewsInLayout();
-				setGrid();
-	
-				
+
+				BitmapFactory.Options options = new BitmapFactory.Options();
+				if (sizeDown) {
+					options.inSampleSize = 3;
+				}
+
+				bitmap = BitmapFactory.decodeFile(imageUri, options);
+				try {
+					out = new FileOutputStream(fileFull);
+					bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+					out.flush();
+					out.close();
+					convertThumb = true;
+					convertFull = true;
+				} catch (Exception e) {
+					convertThumb = false;
+					convertFull = false;
+				}
+				fileFull = null;
+				fileThumb = null;
+				if (convertThumb && convertFull) {
+					myDbHelper.addImage(Integer.parseInt(editID), newImagePath
+							+ ".jpg");
+				}
+
 			}
+
+			gridView.removeAllViewsInLayout();
+			setGrid();
+
+		}
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.image_gallery, menu);
 		return true;
 	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -328,7 +541,7 @@ public class ImageGallery extends Activity {
 		case R.id.import_picture:
 			pickImage();
 			return true;
-				// @drawable/edit_query
+			// @drawable/edit_query
 		case R.id.import_multiple_pictures:
 			pickMultipleImage();
 			return true;
@@ -336,7 +549,6 @@ public class ImageGallery extends Activity {
 		return false;
 	}
 
-	
 	public static Bitmap decodeSampledBitmapFromFile(String path, int reqWidth,
 			int reqHeight) {
 		final BitmapFactory.Options options = new BitmapFactory.Options();

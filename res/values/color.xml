@@ -7,5 +7,5 @@
     <color name="white">#ffffff</color>
         <color name="bg_light_blue">#EBF5FF</color>
     <drawable name="semitransparent_white">#77ffffff</drawable>
-    <drawable name="semitransparent_red">#77ff0000</drawable>
+    <drawable name="semitransparent_red">#7799CCFF</drawable>
 </resources>

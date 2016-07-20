@@ -7,15 +7,20 @@ import java.util.StringTokenizer;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class NewFlight extends Activity {
@@ -23,6 +28,7 @@ public class NewFlight extends Activity {
 	String modelID = "";
 	String editID = "";
 	boolean editMode = false;
+	public static SharedPreferences mPrefs;
 
 	private TextView mDateDisplay;
 	private ImageButton mPickDate;
@@ -32,6 +38,9 @@ public class NewFlight extends Activity {
 	ImageView imageViewChoose;
 	static final int DATE_DIALOG_ID = 0;
 	int column_index;
+	public String labelBeschreibung = "Beschr.:";
+	public String labelDatum = "Datum:";
+	public String labelNumberOfFlights = "Anz.Flüge:";
 
 	DatabaseHelper myDbHelper = new DatabaseHelper(this);
 
@@ -39,15 +48,26 @@ public class NewFlight extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.newflight);
+		getActionBar().setDisplayShowHomeEnabled(false);
 		final String id = getIntent().getStringExtra("id");
+		 getWindow().setSoftInputMode(
+				    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		modelID = getIntent().getStringExtra("model_id");
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+		readPrefs();
+		final TextView textViewlabelBeschreibung=                       (TextView) findViewById(R.id.flabelBeschreibung);
+		final TextView textViewlabelDatum=                              (TextView) findViewById(R.id.flabelDatum);
+		final TextView textViewlabelNumberOfFlights=                    (TextView) findViewById(R.id.flabelNumberOfFlights);
 
-		Log.e("MListe", "- updated flight ID:" + id);
+		textViewlabelBeschreibung.setText(labelBeschreibung);                
+		textViewlabelDatum.setText(labelDatum);                       
+		textViewlabelNumberOfFlights.setText(labelNumberOfFlights);      
 
 		if (!id.equals("")) {
 			editMode = true;
 			EditText sbeschreibung = (EditText) findViewById(R.id.beschreibungedit);
 			EditText sdatum = (EditText) findViewById(R.id.dateedit);
+			Spinner sflightCount = (Spinner) findViewById(R.id.flightCountSpinner);
 
 			try {
 				myDbHelper.createDataBase();
@@ -59,6 +79,16 @@ public class NewFlight extends Activity {
 
 			sdatum.setText(DataToDB[3]);
 			sbeschreibung.setText(DataToDB[2]);
+			String myString = DataToDB[4];
+
+			@SuppressWarnings("rawtypes")
+			ArrayAdapter myAdap = (ArrayAdapter) sflightCount.getAdapter();
+			for (int index = 0, count = myAdap.getCount(); index < count; ++index) {
+				if (myAdap.getItem(index).equals(myString)) {
+					sflightCount.setSelection(index);
+					break;
+				}
+			}
 
 		}
 
@@ -73,24 +103,26 @@ public class NewFlight extends Activity {
 
 		});
 		saveButton.setOnClickListener(new View.OnClickListener() {
-			String[] params = new String[3];
+			String[] params = new String[4];
 			Integer insertedID = 0;
 
 			@Override
 			public void onClick(View arg0) {
 				EditText sbeschreibung = (EditText) findViewById(R.id.beschreibungedit);
 				EditText sdatum = (EditText) findViewById(R.id.dateedit);
-
+				Spinner sflightCount = (Spinner) findViewById(R.id.flightCountSpinner);
 				params[0] = modelID;
 				params[1] = sbeschreibung.getText().toString();
 				params[2] = sdatum.getText().toString().trim();
-				
+				params[3] = sflightCount.getSelectedItem().toString();
+
 				StringTokenizer date = new StringTokenizer(params[2], ".");
 				String day = date.nextToken();
 				String month = date.nextToken();
 				String year = date.nextToken();
-				params[2] = String.format("%02d", Integer.parseInt(day))+"."+String.format("%02d", Integer.parseInt(month))+"."+year;
-				
+				params[2] = String.format("%02d", Integer.parseInt(day)) + "."
+						+ String.format("%02d", Integer.parseInt(month)) + "."
+						+ year;
 				if (!params[0].equals("")) {
 
 					try {
@@ -98,14 +130,8 @@ public class NewFlight extends Activity {
 						myDbHelper.createDataBase();
 						if (editMode == true) {
 							insertedID = myDbHelper.updateFlight(params, id);
-							Log.e("MListe", "- updated flight ID:" + insertedID);
-
 						} else {
 							insertedID = myDbHelper.insertFlight(params);
-
-							Log.e("MListe", "- inserted flight ID:"
-									+ insertedID);
-
 						}
 
 						myDbHelper.close();
@@ -151,6 +177,14 @@ public class NewFlight extends Activity {
 
 				.append(mDay).append(".").append(mMonth + 1).append(".")
 						.append(mYear)));
+	}
+
+	public void readPrefs() {
+		labelBeschreibung = mPrefs.getString("labelBeschreibung",
+				labelBeschreibung);
+		labelDatum = mPrefs.getString("labelDatum", labelDatum);
+		labelNumberOfFlights = mPrefs.getString("labelNumberOfFlights",
+				labelNumberOfFlights);
 	}
 
 	private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
